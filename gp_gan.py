@@ -1,9 +1,8 @@
 import math
-
+import torch
 # import chainer
 # import chainer.functions as F
 import numpy as np
-from chainer import cuda, Variable
 from scipy.fftpack import dct, idct
 from scipy.ndimage import correlate
 from scipy.optimize import minimize
@@ -199,7 +198,7 @@ def gp_gan(obj, bg, mask, G, image_size, gpu, color_weight=1, sigma=0.5, gradien
     mask_init = ndarray_resize(mask, (image_size, image_size), order=0)[:, :, np.newaxis]
     copy_paste_init = obj_im_pyramid[0] * mask_init + bg_im_pyramid[0] * (1 - mask_init)
 #     copy_paste_init_var = Variable(chainer.dataset.concat_examples([preprocess(copy_paste_init)], gpu))
-    copy_paste_init_var = torch.cat(preprocess(copy_paste_init)).to(gpu)
+    copy_paste_init_var = torch.tensor(preprocess(copy_paste_init)).unsqueeze(0).to(gpu)
 
     if supervised:
         gan_im_var = G(copy_paste_init_var)

@@ -1,5 +1,6 @@
 import argparse
 import os
+import numpy as np
 
 # import chainer
 # from chainer import cuda, serializers
@@ -17,7 +18,22 @@ basename = lambda path: os.path.splitext(os.path.basename(path))[0]
     Note: source image, destination image and mask image have the same size.
 """
 
-
+def load_weights(net, path):
+    params = net.state_dict()
+    pretrained_weights = np.load(path, allow_pickle=True)
+    with torch.no_grad(): 
+        for key in params:
+            if "weight" == key[-6:]:
+                npkey = bytes(key[:-7], "utf-8")
+                if npkey in pretrained_weights.keys():
+                    print("Weight found for " + npkey + "layer")
+                    params[key].copy_(torch.from_numpy(pretrained_weights[npkey]["weights"]).type(Tensor))
+            elif "bias" == key[-5:]:
+                npkey = bytes(key[:-5], "utf-8")
+                if npkey in pretrained_weights.keys():
+                    print("Bias found for " + npkey + "layer")
+                    params[key].copy_(torch.from_numpy(pretrained_weights[npkey]["biases"]).type(Tensor))
+                    
 def main():
     parser = argparse.ArgumentParser(description='Gaussian-Poisson GAN for high-resolution image blending')
     parser.add_argument('--nef', type=int, default=64, help='# of base filters in encoder')
@@ -86,7 +102,9 @@ def main():
 
     G = EncoderDecoder(args.nef, args.ngf, args.nc, args.nBottleneck, image_size=args.image_size)
     print('Load pretrained Blending GAN model from {} ...'.format(args.g_path))
-    G.load_state_dict(torch.load(arg.g_path))
+#     load_file = np.load(args.g_path)
+    load_weights(G, args.g_path)
+#     G.load_state_dict(torch.load(args.g_path))
     G.to(device)
     
 
