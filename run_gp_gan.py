@@ -1,8 +1,10 @@
 import argparse
 import os
 
-import chainer
-from chainer import cuda, serializers
+# import chainer
+# from chainer import cuda, serializers
+import torch
+
 from skimage import img_as_float
 from skimage.io import imread, imsave
 
@@ -57,20 +59,37 @@ def main():
         print('\t{}: {}'.format(key, value))
     print('')
 
-    # Init CNN model
-    if args.supervised:
-        G = EncoderDecoder(args.nef, args.ngf, args.nc, args.nBottleneck, image_size=args.image_size)
-        print('Load pretrained Blending GAN model from {} ...'.format(args.g_path))
-        serializers.load_npz(args.g_path, G)
-    else:
-        chainer.config.use_cudnn = 'never'
-        G = DCGAN_G(args.image_size, args.nc, args.ngf)
-        print('Load pretrained unsupervised Blending GAN model from {} ...'.format(args.unsupervised_path))
-        serializers.load_npz(args.unsupervised_path, G)
 
-    if args.gpu >= 0:
-        cuda.get_device(args.gpu).use()  # Make a specified GPU current
-        G.to_gpu()  # Copy the model to the GPU
+
+# # 수정 전
+#     # Init CNN model
+#     if args.supervised:
+#         G = EncoderDecoder(args.nef, args.ngf, args.nc, args.nBottleneck, image_size=args.image_size)
+#         print('Load pretrained Blending GAN model from {} ...'.format(args.g_path))
+#         serializers.load_npz(args.g_path, G)
+#     else:
+#         chainer.config.use_cudnn = 'never'
+#         G = DCGAN_G(args.image_size, args.nc, args.ngf)
+#         print('Load pretrained unsupervised Blending GAN model from {} ...'.format(args.unsupervised_path))
+#         serializers.load_npz(args.unsupervised_path, G)
+
+#     if args.gpu >= 0:
+#         cuda.get_device(args.gpu).use()  # Make a specified GPU current
+#         G.to_gpu()  # Copy the model to the GPU
+
+# 수정 후
+    # Init CNN model
+    if torch.cuda.is_available():
+        device = torch.device('cuda')
+    else:
+        device = torch.device('cpu')
+
+    G = EncoderDecoder(args.nef, args.ngf, args.nc, args.nBottleneck, image_size=args.image_size)
+    print('Load pretrained Blending GAN model from {} ...'.format(args.g_path))
+    G.load_state_dict(torch.load(arg.g_path))
+    G.to(device)
+    
+
 
     # Init image list
     if args.list_path:
@@ -96,7 +115,16 @@ def main():
         bg = img_as_float(imread(test_list[idx][1]))
         mask = imread(test_list[idx][2], as_gray=True).astype(obj.dtype)
 
-        with chainer.using_config("train", False):
+        # # 수정 전
+        # with chainer.using_config("train", False):
+        #     blended_im = gp_gan(obj, bg, mask, G, args.image_size, args.gpu, color_weight=args.color_weight,
+        #                         sigma=args.sigma,
+        #                         gradient_kernel=args.gradient_kernel, smooth_sigma=args.smooth_sigma,
+        #                         supervised=args.supervised,
+        #                         nz=args.nz, n_iteration=args.n_iteration)
+        # 수정 후
+        G.eval()
+        with torch.no_grad():
             blended_im = gp_gan(obj, bg, mask, G, args.image_size, args.gpu, color_weight=args.color_weight,
                                 sigma=args.sigma,
                                 gradient_kernel=args.gradient_kernel, smooth_sigma=args.smooth_sigma,
