@@ -6,8 +6,8 @@ from torch.autograd import Function
 
 import math
 import random
-import functools
-import operator
+# import functools
+# import operator
 
 from op import FusedLeakyReLU, fused_leaky_relu, upfirdn2d, conv2d_gradfix
 

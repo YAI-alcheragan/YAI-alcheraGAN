@@ -136,7 +136,7 @@ class Trainer:
             fake_img = self.generator(copy_paste)
             err = self.discriminator(fake_img)
             loss_g = (1-self.args.l2_weight) * err + \
-                     self.args.l2_weight*self.criterion(fake_img, copy_paste)
+                     self.args.l2_weight*self.criterion(fake_img, bg_cropped)
             self.optimizer_g.zero_grad()
             loss_g.backward()
             self.optimizer_g.step()
