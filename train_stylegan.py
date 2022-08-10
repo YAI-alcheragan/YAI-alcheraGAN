@@ -5,12 +5,13 @@ import os
 import argparse
 import random
 from model_stylegan import *
-device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
-NGPU = torch.cuda.device_count()
-num_workers = 4 * NGPU
+device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+#NGPU = torch.cuda.device_count()
+#num_workers = 4 * NGPU
 from torchsummary.torchsummary import summary
 import cv2
 from torchvision.utils import save_image
+from blend_dataset import BlendingDataset
 
 class Trainer:
     def __init__(self):
@@ -56,10 +57,16 @@ class Trainer:
                             help='Interval of printing log to console (iteration)')
         parser.add_argument('--plot_interval', type=int, default=10, help='Interval of plot (iteration)')
         parser.add_argument('--save_result', type=int, default=0, help='1 for save else 0')
-        parser.add_argument("--dst_path", type='str', default="./", help='save folder')
+        parser.add_argument("--dst_path", default="saved_images", help='save folder')
 
         parser.add_argument("--size", type=int, default=256, help="image sizes for the model")
         parser.add_argument("--channel_multiplier", type=int, default=2, help="channel multiplier factor for the model. config-f = 2, else = 1")
+
+        parser.add_argument("--root", default="/content/drive/MyDrive/GPGAN_Wildfire/smoke_wildfire")
+        parser.add_argument("--bg_folder", default="no_fire")
+        parser.add_argument("--obj_folder", default="smoke")
+        parser.add_argument("--obj_ann", default="_annotations.csv")
+        
 
         self.args = parser.parse_args()
 
@@ -85,12 +92,15 @@ class Trainer:
         self.optimizer_d = torch.optim.Adam(self.discriminator.parameters(), lr=self.args.lr_d)
         self.optimizer_g = torch.optim.Adam(self.generator.parameters(), lr=self.args.lr_g)
 
-        if (device.type == "cuda") and (NGPU > 1):
+        if (device.type == "cuda"):
             print("Multi Gpu activate")
-            self.generator = torch.nn.DataParallel(self.generator, device_ids=list(range(NGPU)))
-            self.discriminator = torch.nn.DataParallel(self.discriminator, device_ids=list(range(NGPU)))
+            #self.generator = torch.nn.DataParallel(self.generator, device_ids=list(range(NGPU)))
+            #self.discriminator = torch.nn.DataParallel(self.discriminator, device_ids=list(range(NGPU)))
 
         '''Data Load'''
+        train_set = BlendingDataset(self.args.root, self.args.bg_folder, self.args.obj_folder, 
+        self.args.obj_ann, "train", self.args.size)
+        self.loader = torch.utils.data.DataLoader(train_set, batch_size=batch_size, shuffle=True)
 
     def save_img(self, img, dst_path, idx=0):
         save_image(img, "%s/%d.png"%(dst_path, idx), nrow=4)
@@ -113,6 +123,8 @@ class Trainer:
         cnt_iter = 1
         best_loss_g  = 10000
         for copy_paste, bg_cropped in self.loader:
+            copy_paste.to(device)
+            bg_cropped.to(device)
             if cnt_iter < 25 or cnt_iter % 500 ==0:
                 Diters = 100
             else:
@@ -121,6 +133,7 @@ class Trainer:
             '''train discriminator first'''
             self.generator.requires_grad_(False)
             self.discriminator.requires_grad_(True)
+
             for _ in range(Diters):
                 fake_img = self.generator(copy_paste)
                 err_real = self.discriminator(bg_cropped)
@@ -153,7 +166,7 @@ if __name__ == "__main__":
     root = "./saved_img/"
     batch_size = 1
     trainer = Trainer()
-    summary(trainer.discriminator, (3, 224, 224))
+    #summary(trainer.discriminator, (3, 224, 224))
     trainer.train()
 
 

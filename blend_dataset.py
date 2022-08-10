@@ -8,7 +8,6 @@ from torch.utils.data import Dataset
 import torchvision.transforms as T
 import cv2
 
-
 class BlendingDataset(Dataset):
   def __init__(self, root, bg_folder, obj_folder, obj_ann, mode, load_size):
     
@@ -29,7 +28,8 @@ class BlendingDataset(Dataset):
     bg = cv2.imread(os.path.join(self.bg_folder,self.bg_imgs[idx]))
     bg_h, bg_w, _ = bg.shape
     random_idx = np.random.randint(len(self.obj_anns))
-    obj_path, x1, y1, x2, y2, _ = self.obj_anns[random_idx] #get random obj img info
+    # roboflow (Tensorflow Object Detection CSV format)
+    obj_path, _, _, _, x1, y1, x2, y2 = self.obj_anns[random_idx] #get random obj img info
     obj = cv2.imread(os.path.join(self.obj_folder,obj_path))
     obj_h, obj_w, _ = obj.shape
 

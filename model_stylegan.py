@@ -6,11 +6,11 @@ from torch.autograd import Function
 
 import math
 import random
-# import functools
-# import operator
+import functools
+import operator
 
-from op import FusedLeakyReLU, fused_leaky_relu, upfirdn2d, conv2d_gradfix
-
+from op_native import FusedLeakyReLU, fused_leaky_relu, upfirdn2d
+import conv2d_gradfix
 
 class PixelNorm(nn.Module):
     def __init__(self):
@@ -413,7 +413,7 @@ class ConvLayer(nn.Sequential):
         )
 
         if activate:
-            layers.append(FusedLeakyReLU(out_channel, bias=bias))
+            layers.append(FusedLeakyReLU(out_channel))
 
         super().__init__(*layers)
 
@@ -659,7 +659,7 @@ class StyleGAN_D(nn.Module):
             EqualLinear(channels[4], 1),
         )
 
-    def forward(self, input):
+    def encode(self, input):
         out = self.convs(input)
 
         batch, channel, height, width = out.shape
