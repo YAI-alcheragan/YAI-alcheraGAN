@@ -1,92 +1,64 @@
+import numpy as nn
 import glob
-import math
-import os
 
-import numpy
-from chainer.dataset import dataset_mixin
-from skimage.io import imread
-from skimage.transform import resize
+transforms_ = [
+    #transforms.ToPILImage(),
+    #transforms.Resize((img_size,img_size)),
+    #transforms.RandomHorizontalFlip(),
+    transforms.ToTensor(),
+    transforms.Normalize((0.5, 0.5, 0.5), (0.5, 0.5, 0.5))
+    ]
+
+def MaskingTransformV2(img, cood):
+
+    # img와 bbox (x,y,w,h)를 받아서 해당 부분 mask 처리
+    H,W = img.shape[-2:]
+    mask = np.ones((H,W), dtype="uint8")
+    
+    x1 = round((cood[1]) * W)
+    y1 = round((cood[2]) * H)
+    w = round((cood[3]) * W)
+    h = round((cood[4]) * H)
+    x1 = round(x1-w/2)
+    y1 = round(y1-h/2)
+    x2= x1 +  w
+    y2 = y1 + h
+
+    mask[y1:y2,x1:x2] = 0
+
+    return img, mask 
+
+class bboxImageDataset(Dataset):
+    def __init__(self, img_root, label_root, transforms_=None, unaligned=False):
+        self.transform = transforms.Compose(transforms_)
+        self.unaligned = unaligned
+
+        self.files_A = sorted(glob.glob(img_root + '/*.*'))     #jpg 파일들 이름 리스트
+        self.files_B = sorted(glob.glob(label_root + '/*.*'))   #(annotation [c,x,y,h,w]) txt 파일들 이름 리스트
 
 
-class H5pyDataset(dataset_mixin.DatasetMixin):
-    def __init__(self, path, which_set='train', load_size=None, crop_size=None, dtype=numpy.float32):
-        from fuel.datasets.hdf5 import H5PYDataset
+        ### txt 파일들(bboxes)을 하나의 ndarray(len(dataset), 5) 로 변환
+        self.bboxes_arr = np.array([[0, 0, 0, 0, 0]])    # 첫줄 임시 생성
+        for file_name in self.files_B:
+            f = open(file_name, 'r')
+            data = np.array([list(map(float,f.readline().split(' ')))])
+            self.bboxes_arr = np.append(self.bboxes_arr, data, axis=0)
+        f.close()
+        self.bboxes_arr = np.delete(self.bboxes_arr, 0, 0)  # 첫줄 지우기
 
-        self._dtype = dtype
-        self._load_size = load_size
-        self._crop_size = crop_size
-        self._data_set = H5PYDataset(path, which_sets=(which_set,))
+
+    def __getitem__(self, index):
+        
+        item_A = self.transform(PIL.Image.open(self.files_A[index % len(self.files_A)]))
+        cood = self.bboxes_arr[index]
+
+        item_A, mask = MaskingTransformV2(item_A, cood)
+        item_B = item_A * mask
+
+
+        return item_A, mask, item_B
+        #return {'A': item_A, 'B': mask}
+        # item_A : 원 이미지 , mask : 마스크 , item_B : 마스킹 된 이미지
 
     def __len__(self):
-        return self._data_set.num_examples
-
-    def get_example(self, i):
-        handle = self._data_set.open()
-        data = self._data_set.get_data(handle, slice(i, i + 1))
-        self._data_set.close(handle)
-
-        im = numpy.squeeze(data[0])
-
-        w, h, _ = im.shape
-        min_size = min(w, h)
-        ratio = self._load_size / min_size
-        rw, rh = int(math.ceil(w * ratio)), int(math.ceil(h * ratio))
-        im = resize(im, (rw, rh), order=1, mode='constant')
-
-        sx, sy = numpy.random.random_integers(0, rw - self._crop_size), numpy.random.random_integers(0,
-                                                                                                     rh - self._crop_size)
-        im = im[sx:sx + self._crop_size, sy:sy + self._crop_size, :] * 2 - 1
-
-        im = numpy.asarray(numpy.transpose(im, (2, 0, 1)), dtype=self._dtype)
-
-        return im
-
-
-class BlendingDataset(dataset_mixin.DatasetMixin):
-    def __init__(self, total_examples, folders, root, ratio, load_size, crop_size, dtype=numpy.float32):
-        imgs_per_folder = {folder: glob.glob(os.path.join(root, folder, '*')) for folder in folders}
-        self._len = total_examples
-
-        self._dtype = dtype
-        self._load_size = load_size
-        self._crop_size = crop_size
-        self._size = int(self._crop_size * ratio)
-        self._sx = self._crop_size // 2 - self._size // 2
-
-        self._imgs = []
-        for _ in range(self._len):
-            folder = numpy.random.choice(folders)
-            obj_path, bg_path = numpy.random.choice(imgs_per_folder[folder], 2, replace=False)
-            self._imgs.append((obj_path, bg_path))
-
-    def __len__(self):
-        return self._len
-
-    def _crop(self, im, rw, rh, sx, sy):
-        im = resize(im, (rw, rh), order=1, preserve_range=False, mode='constant')
-        im = im[sx:sx + self._crop_size, sy:sy + self._crop_size, :] * 2 - 1
-        im = numpy.transpose(im, (2, 0, 1)).astype(self._dtype)
-
-        return im
-
-    def get_example(self, i):
-        obj_path, bg_path = self._imgs[i]
-        obj = imread(obj_path)
-        bg = imread(bg_path)
-
-        w, h, _ = obj.shape
-        min_size = min(w, h)
-        ratio = self._load_size / min_size
-        rw, rh = int(math.ceil(w * ratio)), int(math.ceil(h * ratio))
-        sx, sy = numpy.random.random_integers(0, rw - self._crop_size), numpy.random.random_integers(0,
-                                                                                                     rh - self._crop_size)
-
-        obj_croped = self._crop(obj, rw, rh, sx, sy)
-        bg_croped = self._crop(bg, rw, rh, sx, sy)
-
-        copy_paste = bg_croped.copy()
-        copy_paste[:, self._sx:self._sx + self._size, self._sx:self._sx + self._size] = obj_croped[:,
-                                                                                        self._sx:self._sx + self._size,
-                                                                                        self._sx:self._sx + self._size]
-
-        return copy_paste, bg_croped
+        return max(len(self.files_A), len(self.files_B))
