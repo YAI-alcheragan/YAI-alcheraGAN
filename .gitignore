@@ -1,6 +1,9 @@
 # Model files
 *.npz
 
+# Image Dataset
+smoke_wildfire/
+
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[cod]
