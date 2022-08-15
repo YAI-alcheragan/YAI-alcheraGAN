@@ -685,7 +685,7 @@ class EncoderDecoder(nn.Module):
         super().__init__()
         self.encoder=StyleGAN_D(size, style_dim, channel_multiplier)
         self.bn=nn.BatchNorm2d(style_dim)
-        self.decoder=StyleGAN_G(size, nBottleneck, style_dim, n_mlp)
+        self.decoder=StyleGAN_G(size, style_dim, n_mlp)
         self.leakyrelu = nn.LeakyReLU()
 
     def encode(self, x):
