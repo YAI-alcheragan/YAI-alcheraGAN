@@ -47,7 +47,7 @@ class BlendingDataset(Dataset):
     copy_paste = bg.copy()
     copy_paste[bg_crop_y:bg_crop_y+crop_h, bg_crop_x:bg_crop_x+crop_w] = obj_crop
 
-    # copy_paste, bg = self.transform(copy_paste), self.transform(bg)
+    copy_paste, bg = self.transform(copy_paste), self.transform(bg)
 
     return copy_paste, bg 
     
