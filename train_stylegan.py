@@ -123,8 +123,8 @@ class Trainer:
         cnt_iter = 1
         best_loss_g  = 10000
         for copy_paste, bg_cropped in self.loader:
-            copy_paste.to(device)
-            bg_cropped.to(device)
+            copy_paste = copy_paste.to(device)
+            bg_cropped = bg_cropped.to(device)
             if cnt_iter < 25 or cnt_iter % 500 ==0:
                 Diters = 100
             else:
