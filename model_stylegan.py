@@ -454,7 +454,7 @@ class StyleGAN_G(nn.Module):
 
         self.style_dim = style_dim
 
-        layers = [PixelNorm()]
+        layers = [nn.BatchNorm2d(style_dim)]
         for i in range(n_mlp):
             layers.append(
                 EqualLinear(
@@ -557,8 +557,8 @@ class StyleGAN_G(nn.Module):
         randomize_noise=True,
     ):
         if not input_is_latent:
-            styles = [self.style(s) for s in styles]
-
+            # styles = [self.style(s) for s in styles]
+            styles = self.style(styles)
         if noise is None:
             if randomize_noise:
                 noise = [None] * self.num_layers
