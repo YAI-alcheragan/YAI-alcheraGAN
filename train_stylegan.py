@@ -19,7 +19,7 @@ class Trainer:
         # parser.add_argument('--nef', type=int, default=64, help='# of base filters in encoder')
         # parser.add_argument('--ngf', type=int, default=64, help='# of base filters in decoder')
         # parser.add_argument('--nc', type=int, default=3, help='# of output channels in decoder')
-        parser.add_argument('--nBottleneck', type=int, default=4000, help='# of output channels in encoder')
+        # parser.add_argument('--nBottleneck', type=int, default=4000, help='# of output channels in encoder')
         # parser.add_argument('--ndf', type=int, default=64, help='# of base filters in D')
 
         parser.add_argument('--lr_d', type=float, default=0.0002, help='Learning rate for Critic, default=0.0002')
@@ -85,8 +85,8 @@ class Trainer:
         self.criterion = F.mse_loss
 
         '''Model'''
-        self.generator = EncoderDecoder(self.args.size, self.args.nBottleneck, self.args.latent, self.args.n_mlp, self.args.channel_multiplier).to(device)
-        self.discriminator = StyleGAN_D(self.args.size, self.args.nBottleneck).to(device)
+        self.generator = EncoderDecoder(self.args.size, self.args.latent, self.args.n_mlp, self.args.channel_multiplier).to(device)
+        self.discriminator = StyleGAN_D(self.args.size).to(device)
 
         '''optimizer'''
         self.optimizer_d = torch.optim.Adam(self.discriminator.parameters(), lr=self.args.lr_d)

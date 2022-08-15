@@ -442,7 +442,6 @@ class ResBlock(nn.Module):
 class StyleGAN_G(nn.Module):
     def __init__(self,
         size,
-        nBottleneck,
         style_dim,
         n_mlp,
         channel_multiplier=2,
@@ -459,7 +458,7 @@ class StyleGAN_G(nn.Module):
         for i in range(n_mlp):
             layers.append(
                 EqualLinear(
-                    nBottleneck, style_dim, lr_mul=lr_mlp, activation="fused_lrelu"
+                    style_dim, style_dim, lr_mul=lr_mlp, activation="fused_lrelu"
                 )
             )
 
@@ -621,7 +620,7 @@ class StyleGAN_G(nn.Module):
 
 # Discriminator
 class StyleGAN_D(nn.Module):
-    def __init__(self, size, nBottleneck, channel_multiplier=2, blur_kernel=[1, 3, 3, 1]):
+    def __init__(self, size, style_dim, channel_multiplier=2, blur_kernel=[1, 3, 3, 1]):
         super().__init__()
 
         channels = {
@@ -656,8 +655,9 @@ class StyleGAN_D(nn.Module):
 
         self.final_conv = ConvLayer(in_channel + 1, channels[4], 3)
         self.final_linear = nn.Sequential(
-            EqualLinear(channels[4] * 4 * 4, channels[4], activation="fused_lrelu"),
-            EqualLinear(channels[4], nBottleneck),
+            EqualLinear(4, channels[4], activation="fused_lrelu"),
+            # EqualLinear(channels[4] * 4 * 4, channels[4], activation="fused_lrelu"),
+            EqualLinear(channels[4], style_dim),
         )
 
     def forward(self, input):
@@ -675,16 +675,16 @@ class StyleGAN_D(nn.Module):
 
         out = self.final_conv(out)
 
-        out = out.view(batch, -1)
+        # out = out.view(batch, -1)
         out = self.final_linear(out)
 
         return out
 
 class EncoderDecoder(nn.Module):
-    def __init__(self, size, nBottleneck, style_dim, n_mlp, channel_multiplier):
+    def __init__(self, size, style_dim, n_mlp, channel_multiplier):
         super().__init__()
-        self.encoder=StyleGAN_D(size, nBottleneck, channel_multiplier)
-        self.bn=nn.BatchNorm2d(nBottleneck)
+        self.encoder=StyleGAN_D(size, style_dim, channel_multiplier)
+        self.bn=nn.BatchNorm2d(style_dim)
         self.decoder=StyleGAN_G(size, nBottleneck, style_dim, n_mlp)
         self.leakyrelu = nn.LeakyReLU()
 
