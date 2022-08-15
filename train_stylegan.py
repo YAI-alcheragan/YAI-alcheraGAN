@@ -166,7 +166,7 @@ if __name__ == "__main__":
     root = "./saved_img/"
     batch_size = 1
     trainer = Trainer()
-    summary(trainer.discriminator, (3, 224, 224))
+    summary(trainer.discriminator, (3, 256, 256))
     trainer.train()
 
 
