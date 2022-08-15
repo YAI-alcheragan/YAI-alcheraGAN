@@ -659,7 +659,7 @@ class StyleGAN_D(nn.Module):
             EqualLinear(channels[4], 1),
         )
 
-    def encode(self, input):
+    def forward(self, input):
         out = self.convs(input)
 
         batch, channel, height, width = out.shape
@@ -688,7 +688,7 @@ class EncoderDecoder(nn.Module):
         self.leakyrelu = nn.LeakyReLU()
 
     def encode(self, x):
-        h = self.encoder.encode(x)
+        h = self.encode(x)
         h = self.leakyrelu(self.bn(h))
 
         return h
