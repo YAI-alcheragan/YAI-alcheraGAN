@@ -86,7 +86,7 @@ class Trainer:
 
         '''Model'''
         self.generator = EncoderDecoder(self.args.size, self.args.latent, self.args.n_mlp, self.args.channel_multiplier).to(device)
-        self.discriminator = StyleGAN_D(self.args.size).to(device)
+        self.discriminator = StyleGAN_D(self.args.size, self.args.latent).to(device)
 
         '''optimizer'''
         self.optimizer_d = torch.optim.Adam(self.discriminator.parameters(), lr=self.args.lr_d)
