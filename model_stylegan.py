@@ -442,6 +442,7 @@ class ResBlock(nn.Module):
 class StyleGAN_G(nn.Module):
     def __init__(self,
         size,
+        nBottleneck,
         style_dim,
         n_mlp,
         channel_multiplier=2,
@@ -458,7 +459,7 @@ class StyleGAN_G(nn.Module):
         for i in range(n_mlp):
             layers.append(
                 EqualLinear(
-                    style_dim, style_dim, lr_mul=lr_mlp, activation="fused_lrelu"
+                    nBottleneck, style_dim, lr_mul=lr_mlp, activation="fused_lrelu"
                 )
             )
 
@@ -620,7 +621,7 @@ class StyleGAN_G(nn.Module):
 
 # Discriminator
 class StyleGAN_D(nn.Module):
-    def __init__(self, size, channel_multiplier=2, blur_kernel=[1, 3, 3, 1]):
+    def __init__(self, size, nBottleneck, channel_multiplier=2, blur_kernel=[1, 3, 3, 1]):
         super().__init__()
 
         channels = {
@@ -656,7 +657,7 @@ class StyleGAN_D(nn.Module):
         self.final_conv = ConvLayer(in_channel + 1, channels[4], 3)
         self.final_linear = nn.Sequential(
             EqualLinear(channels[4] * 4 * 4, channels[4], activation="fused_lrelu"),
-            EqualLinear(channels[4], 1),
+            EqualLinear(channels[4], nBottleneck),
         )
 
     def forward(self, input):
@@ -680,11 +681,11 @@ class StyleGAN_D(nn.Module):
         return out
 
 class EncoderDecoder(nn.Module):
-    def __init__(self, size, style_dim, n_mlp, channel_multiplier):
+    def __init__(self, size, nBottleneck, style_dim, n_mlp, channel_multiplier):
         super().__init__()
-        self.encoder=StyleGAN_D(size, channel_multiplier)
-        self.bn=nn.BatchNorm2d(style_dim)
-        self.decoder=StyleGAN_G(size, style_dim, n_mlp)
+        self.encoder=StyleGAN_D(size, nBottleneck, channel_multiplier)
+        self.bn=nn.BatchNorm2d(nBottleneck)
+        self.decoder=StyleGAN_G(size, nBottleneck, style_dim, n_mlp)
         self.leakyrelu = nn.LeakyReLU()
 
     def encode(self, x):
