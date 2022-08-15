@@ -689,7 +689,7 @@ class EncoderDecoder(nn.Module):
         self.leakyrelu = nn.LeakyReLU()
 
     def encode(self, x):
-        h = self.encode(x)
+        h = self.encoder(x)
         h = self.leakyrelu(self.bn(h))
 
         return h
