@@ -100,7 +100,7 @@ class Trainer:
         '''Data Load'''
         train_set = BlendingDataset(self.args.root, self.args.bg_folder, self.args.obj_folder, 
         self.args.obj_ann, "train", self.args.size)
-        self.loader = torch.utils.data.DataLoader(train_set, batch_size=batch_size, shuffle=True)
+        self.loader = torch.utils.data.DataLoader(train_set, batch_size=self.args.batch_size, shuffle=True)
 
     def save_img(self, img, dst_path, idx=0):
         save_image(img, "%s/%d.png"%(dst_path, idx), nrow=4)

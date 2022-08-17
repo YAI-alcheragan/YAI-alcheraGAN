@@ -258,7 +258,7 @@ class ModulatedConv2d(nn.Module):
         )
 
         self.modulation = EqualLinear(style_dim, in_channel, bias_init=1)
-
+        # self.modulation = EqualLinear(4, in_channel, bias_init=1)
         self.demodulate = demodulate
         self.fused = fused
 
@@ -299,8 +299,8 @@ class ModulatedConv2d(nn.Module):
                 out = out * dcoefs.view(batch, -1, 1, 1)
 
             return out
-
         style = self.modulation(style).view(batch, 1, in_channel, 1, 1)
+        # style = self.modulation(style).view(batch, 4, in_channel, 1, 1)
         weight = self.scale * self.weight * style
 
         if self.demodulate:
@@ -477,6 +477,9 @@ class StyleGAN_G(nn.Module):
         }
 
         self.input = ConstantInput(self.channels[4])
+        # self.conv1 = StyledConv(
+        #     self.channels[4], self.channels[4], 3, style_dim, blur_kernel=blur_kernel
+        # )
         self.conv1 = StyledConv(
             self.channels[4], self.channels[4], 3, style_dim, blur_kernel=blur_kernel
         )
@@ -552,7 +555,8 @@ class StyleGAN_G(nn.Module):
         inject_index=None,
         truncation=1,
         truncation_latent=None,
-        input_is_latent=False,
+        # input_is_latent=False,
+        input_is_latent=True,
         noise=None,
         randomize_noise=True,
     ):
@@ -577,27 +581,26 @@ class StyleGAN_G(nn.Module):
 
             styles = style_t
 
-        if len(styles) < 2:
-            inject_index = self.n_latent
+        # if len(styles) < 2:
+        #     inject_index = self.n_latent
 
-            if styles[0].ndim < 3:
-                latent = styles[0].unsqueeze(1).repeat(1, inject_index, 1)
+        #     if styles[0].ndim < 3:
+        #         latent = styles[0].unsqueeze(1).repeat(1, inject_index, 1)
 
-            else:
-                latent = styles[0]
+        #     else:
+        #         latent = styles[0]
 
-        else:
-            if inject_index is None:
-                inject_index = random.randint(1, self.n_latent - 1)
+        # else:
+        #     if inject_index is None:
+        #         inject_index = random.randint(1, self.n_latent - 1)
 
-            latent = styles[0].unsqueeze(1).repeat(1, inject_index, 1)
-            latent2 = styles[1].unsqueeze(1).repeat(1, self.n_latent - inject_index, 1)
+        #     latent = styles[0].unsqueeze(1).repeat(1, inject_index, 1)
+        #     latent2 = styles[1].unsqueeze(1).repeat(1, self.n_latent - inject_index, 1)
 
-            latent = torch.cat([latent, latent2], 1)
-
+        #     latent = torch.cat([latent, latent2], 1)
+        latent = styles
         out = self.input(latent)
         out = self.conv1(out, latent[:, 0], noise=noise[0])
-
         skip = self.to_rgb1(out, latent[:, 1])
 
         i = 1
@@ -676,8 +679,7 @@ class StyleGAN_D(nn.Module):
         out = self.final_conv(out)
 
         # out = out.view(batch, -1)
-        out = self.final_linear(out)
-
+        # out = self.final_linear(out)
         return out
 
 class EncoderDecoder(nn.Module):
