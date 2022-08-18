@@ -257,8 +257,8 @@ class ModulatedConv2d(nn.Module):
             torch.randn(1, out_channel, in_channel, kernel_size, kernel_size)
         )
 
-        self.modulation = EqualLinear(style_dim, in_channel, bias_init=1)
-        # self.modulation = EqualLinear(4, in_channel, bias_init=1)
+        # self.modulation = EqualLinear(style_dim, in_channel, bias_init=1)
+        self.modulation = EqualLinear(16, in_channel, bias_init=1)
         self.demodulate = demodulate
         self.fused = fused
 
@@ -299,6 +299,7 @@ class ModulatedConv2d(nn.Module):
                 out = out * dcoefs.view(batch, -1, 1, 1)
 
             return out
+        style = style.view(style.size(0), -1 )
         style = self.modulation(style).view(batch, 1, in_channel, 1, 1)
         # style = self.modulation(style).view(batch, 4, in_channel, 1, 1)
         weight = self.scale * self.weight * style
@@ -658,8 +659,8 @@ class StyleGAN_D(nn.Module):
 
         self.final_conv = ConvLayer(in_channel + 1, channels[4], 3)
         self.final_linear = nn.Sequential(
-            EqualLinear(4, channels[4], activation="fused_lrelu"),
-            # EqualLinear(channels[4] * 4 * 4, channels[4], activation="fused_lrelu"),
+            # EqualLinear(4, channels[4], activation="fused_lrelu"),
+            EqualLinear(channels[4] * 4 * 4, channels[4], activation="fused_lrelu"),
             EqualLinear(channels[4], style_dim),
         )
 
