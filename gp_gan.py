@@ -207,7 +207,7 @@ def gp_gan(obj, bg, mask, G, image_size, gpu, color_weight=1, sigma=0.5, gradien
         res = minimize(z_generate, z_init, args=(G, copy_paste_init_var, nz, gpu), method='L-BFGS-B', jac=True,
                        options={'maxiter': n_iteration, 'disp': False})
         z = np.reshape(res.x, (nz, 1, 1)).astype(np.float32)
-        gan_im_var = G(toch.cat(z).to(gpu))
+        gan_im_var = G(torch.cat(z).to(gpu))
     gan_im = np.clip(np.transpose((np.squeeze(gan_im_var.data.detach().cpu().numpy()) + 1) / 2, (1, 2, 0)), 0, 1).astype(
         obj.dtype)
 
