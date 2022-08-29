@@ -1,0 +1,5 @@
+robowflow_gpgantest_pretrain/src_1.jpg;robowflow_gpgantest_pretrain/dst_1.jpg;robowflow_gpgantest_pretrain/mask_1.jpg
+robowflow_gpgantest_pretrain/src_2.jpg;robowflow_gpgantest_pretrain/dst_1.jpg;robowflow_gpgantest_pretrain/mask_2.jpg
+robowflow_gpgantest_pretrain/src_3.jpg;robowflow_gpgantest_pretrain/dst_1.jpg;robowflow_gpgantest_pretrain/mask_3.jpg
+robowflow_gpgantest_pretrain/src_4.jpg;robowflow_gpgantest_pretrain/dst_1.jpg;robowflow_gpgantest_pretrain/mask_4.jpg
+robowflow_gpgantest_pretrain/src_5.jpg;robowflow_gpgantest_pretrain/dst_1.jpg;robowflow_gpgantest_pretrain/mask_5.jpg
