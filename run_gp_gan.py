@@ -5,6 +5,7 @@ import numpy as np
 # import chainer
 # from chainer import cuda, serializers
 import torch
+from torch import Tensor
 
 from skimage import img_as_float
 from skimage.io import imread, imsave
@@ -24,16 +25,58 @@ def load_weights(net, path):
     with torch.no_grad(): 
         for key in params:
             if "weight" == key[-6:]:
-                npkey = bytes(key[:-7], "utf-8")
+                npkey = key[:-7].split('.')
+                if npkey[0] == 'bn':
+                    npkey = '/'.join(npkey)
+                else:
+                    npkey.pop(1)
+                    npkey = '/'.join(npkey)
+                npkey1 = npkey + '/W'
+                npkey2 = npkey + '/gamma'
+                # npkey = bytes(npkey, "utf-8")
+                if npkey1 in pretrained_weights.keys():
+                    print("Weight found for " + npkey1 + " layer")
+                    params[key].copy_(torch.from_numpy(pretrained_weights[npkey1]).type(Tensor))
+                if npkey2 in pretrained_weights.keys():
+                    print("Weight found for " + npkey2 + " layer")
+                    params[key].copy_(torch.from_numpy(pretrained_weights[npkey2]).type(Tensor))
+            if "running_var" == key[-11:]:
+                npkey = key[:-12].split('.')
+                if npkey[0] == 'bn':
+                    npkey = '/'.join(npkey)
+                else:
+                    npkey.pop(1)
+                    npkey = '/'.join(npkey)
+                npkey = npkey + '/avg_var'
+                # npkey = bytes(npkey, "utf-8")
                 if npkey in pretrained_weights.keys():
-                    print("Weight found for " + npkey + "layer")
-                    params[key].copy_(torch.from_numpy(pretrained_weights[npkey]["weights"]).type(Tensor))
-            elif "bias" == key[-5:]:
-                npkey = bytes(key[:-5], "utf-8")
+                    print("Weight found for " + npkey + " layer")
+                    params[key].copy_(torch.from_numpy(pretrained_weights[npkey]).type(Tensor))
+            if "running_mean" == key[-12:]:
+                npkey = key[:-13].split('.')
+                if npkey[0] == 'bn':
+                    npkey = '/'.join(npkey)
+                else:
+                    npkey.pop(1)
+                    npkey = '/'.join(npkey)
+                npkey = npkey + '/avg_mean'
+                # npkey = bytes(npkey, "utf-8")
                 if npkey in pretrained_weights.keys():
-                    print("Bias found for " + npkey + "layer")
-                    params[key].copy_(torch.from_numpy(pretrained_weights[npkey]["biases"]).type(Tensor))
-                    
+                    print("Weight found for " + npkey + " layer")
+                    params[key].copy_(torch.from_numpy(pretrained_weights[npkey]).type(Tensor))
+            if "bias" == key[-4:]:
+                npkey = key[:-5].split('.')
+                if npkey[0] == 'bn':
+                    npkey = '/'.join(npkey)
+                else:
+                    npkey.pop(1)
+                    npkey = '/'.join(npkey)
+                npkey = npkey + '/beta'
+                # npkey = bytes(npkey, "utf-8")
+                if npkey in pretrained_weights.keys():
+                    print("Weight found for " + npkey + " layer")
+                    params[key].copy_(torch.from_numpy(pretrained_weights[npkey]).type(Tensor))
+
 def main():
     parser = argparse.ArgumentParser(description='Gaussian-Poisson GAN for high-resolution image blending')
     parser.add_argument('--nef', type=int, default=64, help='# of base filters in encoder')
@@ -99,12 +142,13 @@ def main():
         device = torch.device('cuda')
     else:
         device = torch.device('cpu')
-
+    
     G = EncoderDecoder(args.nef, args.ngf, args.nc, args.nBottleneck, image_size=args.image_size)
     print('Load pretrained Blending GAN model from {} ...'.format(args.g_path))
-#     load_file = np.load(args.g_path)
+    # load_file = np.load(args.g_path)
     load_weights(G, args.g_path)
-#     G.load_state_dict(torch.load(args.g_path))
+    
+    # G.load_state_dict(np.load(args.g_path))
     G.to(device)
     
 
@@ -148,7 +192,6 @@ def main():
                                 gradient_kernel=args.gradient_kernel, smooth_sigma=args.smooth_sigma,
                                 supervised=args.supervised,
                                 nz=args.nz, n_iteration=args.n_iteration)
-
         if args.blended_image:
             imsave(args.blended_image, blended_im)
         else:
@@ -156,6 +199,6 @@ def main():
                                                         basename(test_list[idx][1]), basename(test_list[idx][2])),
                    blended_im)
 
-
 if __name__ == '__main__':
     main()
+x

@@ -2,7 +2,6 @@ import torch
 import torchvision
 from torch import nn
 
-
 def init_conv(array):
 #     xp = cuda.get_array_module(array)
     xp = torch.tensor(array) # 오류 날 수 있음
@@ -25,25 +24,26 @@ class DCGAN_G(nn.Module):
         layers = []
         # input is Z, going into a convolution
 #         layers.append(L.Deconvolution2D(None, cngf, ksize=4, stride=1, pad=0, initialW=conv_init, nobias=True))
-        layers.append(nn.ConvTranspose2d(nBottleneck, cngf, kernel_size=4, stride=1, padding=0))
+        layers.append(nn.ConvTranspose2d(nBottleneck, cngf, kernel_size=4, stride=1, padding=0, bias=False))
         
         layers.append(nn.BatchNorm2d(cngf))
         layers.append(nn.ReLU())
         csize, cndf = 4, cngf
         while csize < isize // 2:
 #             layers.append(L.Deconvolution2D(None, cngf // 2, ksize=4, stride=2, pad=1, initialW=conv_init, nobias=True))
-            layers.append(nn.ConvTranspose2d(cngf, cngf // 2, kernel_size=4, stride=2, padding=1))
+            layers.append(nn.ConvTranspose2d(cngf, cngf // 2, kernel_size=4, stride=2, padding=1, bias=False))
             layers.append(nn.BatchNorm2d(cngf // 2))
             layers.append(nn.ReLU())
             cngf = cngf // 2
             csize = csize * 2
-        layers.append(nn.ConvTranspose2d(cngf, nc, kernel_size=4, stride=2, padding=1))
+        layers.append(nn.ConvTranspose2d(cngf, nc, kernel_size=4, stride=2, padding=1, bias=False))
         layers.append(nn.Tanh())
         self.layers = nn.Sequential(*layers)
 
     def __call__(self, x):
         for i in range(len(self.layers)):
             x = self.layers[i](x)
+        # x = self.layers(x)
         return x
 
 
@@ -51,20 +51,20 @@ class DCGAN_D(nn.Module):
     def __init__(self, isize, ndf, nz=1, conv_init=None, bn_init=None):
         super().__init__()
         layers = []
-        layers.append(nn.Conv2d(3, ndf, kernel_size=4, stride=2, padding=1))
+        layers.append(nn.Conv2d(3, ndf, kernel_size=4, stride=2, padding=1, bias=False))
         layers.append(nn.LeakyReLU())
         csize, cndf = isize / 2, ndf
         while csize > 4:
             in_feat = cndf
             out_feat = cndf * 2
-            layers.append(nn.Conv2d(in_feat, out_feat, kernel_size=4, stride=2, padding=1))
+            layers.append(nn.Conv2d(in_feat, out_feat, kernel_size=4, stride=2, padding=1, bias=False))
             layers.append(nn.BatchNorm2d(out_feat))
             layers.append(nn.LeakyReLU())
 
             cndf = cndf * 2
             csize = csize / 2
         # state size. K x 4 x 4
-        layers.append(nn.Conv2d(out_feat, nz, kernel_size=4, stride=1, padding=0))
+        layers.append(nn.Conv2d(out_feat, nz, kernel_size=4, stride=1, padding=0, bias=False))
         self.layers = nn.Sequential(*layers)
 
     def encode(self, x):
