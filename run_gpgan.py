@@ -12,6 +12,9 @@ from skimage.io import imread, imsave
 
 from gp_gan import gp_gan
 from model import EncoderDecoder
+from blend_dataset import BlendingDataset
+
+import torchvision.transforms as T
 
 basename = lambda path: os.path.splitext(os.path.basename(path))[0]
 
@@ -106,10 +109,16 @@ def main():
                         help='File for input list in csv format: obj_path;bg_path;mask_path in each line')
     parser.add_argument('--result_folder', default='blending_result', help='Name for folder storing results')
 
-    parser.add_argument('--src_image', default='', help='Path for source image')
-    parser.add_argument('--dst_image', default='', help='Path for destination image')
-    parser.add_argument('--mask_image', default='', help='Path for mask image')
-    parser.add_argument('--blended_image', default='', help='Where to save blended image')
+# 수정 후 (+)
+    parser.add_argument('--root', default='', help='Path for images : root/test/bg , root/test/smoke')
+    parser.add_argument('--blended_folder', default='', help='Where to save blended image')
+
+# # 수정 전 (-)
+#     parser.add_argument('--src_image', default='', help='Path for source image')
+#     parser.add_argument('--dst_image', default='', help='Path for destination image')
+#     parser.add_argument('--mask_image', default='', help='Path for mask image')
+#     parser.add_argument('--blended_image', default='', help='Where to save blended image')
+
 
     args = parser.parse_args()
 
@@ -125,55 +134,97 @@ def main():
     
     G = EncoderDecoder(args.nef, args.ngf, args.nc, args.nBottleneck, image_size=args.image_size)
     print('Load pretrained Blending GAN model from {} ...'.format(args.g_path))
-    # load_weights(G, args.g_path)
-    G.load_state_dict(torch.load(args.g_path))
+    load_weights(G, args.g_path)
+    # G.load_state_dict(torch.load(args.g_path))
     G.to(device)
 
-    # Init image list
-    if args.list_path:
-        print('Load images from {} ...'.format(args.list_path))
-        with open(args.list_path) as f:
-            test_list = [line.strip().split(';') for line in f]
-        print('\t {} images in total ...\n'.format(len(test_list)))
-    else:
-        test_list = [(args.src_image, args.dst_image, args.mask_image)]
 
-    if not args.blended_image:
-        # Init result folder
-        if not os.path.isdir(args.result_folder):
-            os.makedirs(args.result_folder)
-        print('Result will save to {} ...\n'.format(args.result_folder))
 
-    total_size = len(test_list)
-    for idx in range(total_size):
-        print('Processing {}/{} ...'.format(idx + 1, total_size))
 
-        # load image
-        obj = img_as_float(imread(test_list[idx][0]))
-        bg = img_as_float(imread(test_list[idx][1]))
-        mask = imread(test_list[idx][2], as_gray=True).astype(obj.dtype)
 
-        # # 수정 전
-        # with chainer.using_config("train", False):
-        #     blended_im = gp_gan(obj, bg, mask, G, args.image_size, args.gpu, color_weight=args.color_weight,
-        #                         sigma=args.sigma,
-        #                         gradient_kernel=args.gradient_kernel, smooth_sigma=args.smooth_sigma,
-        #                         supervised=args.supervised,
-        #                         nz=args.nz, n_iteration=args.n_iteration)
-        # 수정 후
+# 수정 후 (+)
+
+
+    if not os.path.isdir(args.blended_folder):
+        os.makedirs(args.blended_folder)
+    print('Result will save to {} ...\n'.format(args.blended_folder))
+
+
+    bg_folder, obj_folder = "bg", "smoke"       # obj1.jpg, obj1.json ... in /root/test/obj_folder
+    test_loader = torch.utils.data.DataLoader(BlendingDataset(root= args.root, bg_folder=bg_folder, obj_folder=obj_folder, mode="test", load_size=128),
+                                            batch_size=1, 
+                                            shuffle=False,
+                                            drop_last=True)  
+    normalize_tf = T.Compose([T.Normalize((0.5, 0.5, 0.5), (0.5, 0.5, 0.5))])
+
+    with torch.no_grad():
         G.eval()
-        with torch.no_grad():
-            blended_im = gp_gan(obj, bg, mask, G, args.image_size, args.gpu, color_weight=args.color_weight,
+
+        for idx, batch in enumerate(test_loader):
+            print('Processing {}/{} ...'.format(idx + 1, len(test_loader)))
+
+            norm_obj, norm_bg, mask = torch.squeeze(normalize_tf(batch["obj"])).cpu().numpy(), \
+            torch.squeeze(normalize_tf(batch["bg"])).cpu().numpy(), torch.squeeze(batch["mask"]).cpu().numpy()
+            norm_obj, norm_bg, mask = np.transpose(norm_obj,(1,2,0)), np.transpose(norm_bg,(1,2,0)) , np.transpose(mask,(1,2,0))
+            blended_im = gp_gan( norm_obj, norm_bg, mask[:,:,0] , G, args.image_size, args.gpu, color_weight=args.color_weight,
                                 sigma=args.sigma,
                                 gradient_kernel=args.gradient_kernel, smooth_sigma=args.smooth_sigma,
                                 supervised=args.supervised,
                                 nz=args.nz, n_iteration=args.n_iteration)
-        if args.blended_image:
-            imsave(args.blended_image, blended_im)
-        else:
-            imsave('{}/obj_{}_bg_{}_mask_{}.png'.format(args.result_folder, basename(test_list[idx][0]),
-                                                        basename(test_list[idx][1]), basename(test_list[idx][2])),
-                   blended_im)
+
+            if args.blended_folder:
+                imsave('{}/obj_{}.png'.format(args.blended_folder, idx),blended_im) 
+            else:
+                imsave('./obj_{}.png'.format(args.blended_folder, idx),blended_im)    
+
+# # 수정 전 (-)
+#     # Init image list
+#     if args.list_path:
+#         print('Load images from {} ...'.format(args.list_path))
+#         with open(args.list_path) as f:
+#             test_list = [line.strip().split(';') for line in f]
+#         print('\t {} images in total ...\n'.format(len(test_list)))
+#     else:
+#         test_list = [(args.src_image, args.dst_image, args.mask_image)]
+
+#     if not args.blended_image:
+#         # Init result folder
+#         if not os.path.isdir(args.result_folder):
+#             os.makedirs(args.result_folder)
+#         print('Result will save to {} ...\n'.format(args.result_folder))
+
+#     total_size = len(test_list)
+#     for idx in range(total_size):
+#         print('Processing {}/{} ...'.format(idx + 1, total_size))
+
+#         # load image
+#         obj = img_as_float(imread(test_list[idx][0]))
+#         bg = img_as_float(imread(test_list[idx][1]))
+#         mask = imread(test_list[idx][2], as_gray=True).astype(obj.dtype)
+
+#         # # 수정 전
+#         # with chainer.using_config("train", False):
+#         #     blended_im = gp_gan(obj, bg, mask, G, args.image_size, args.gpu, color_weight=args.color_weight,
+#         #                         sigma=args.sigma,
+#         #                         gradient_kernel=args.gradient_kernel, smooth_sigma=args.smooth_sigma,
+#         #                         supervised=args.supervised,
+#         #                         nz=args.nz, n_iteration=args.n_iteration)
+#         # 수정 후
+#         G.eval()
+#         with torch.no_grad():
+#             blended_im = gp_gan(obj, bg, mask, G, args.image_size, args.gpu, color_weight=args.color_weight,
+#                                 sigma=args.sigma,
+#                                 gradient_kernel=args.gradient_kernel, smooth_sigma=args.smooth_sigma,
+#                                 supervised=args.supervised,
+#                                 nz=args.nz, n_iteration=args.n_iteration)
+#         if args.blended_image:
+#             imsave(args.blended_image, blended_im)
+#         else:
+#             imsave('{}/obj_{}_bg_{}_mask_{}.png'.format(args.result_folder, basename(test_list[idx][0]),
+#                                                         basename(test_list[idx][1]), basename(test_list[idx][2])),
+#                    blended_im)
+    
+
 
 if __name__ == '__main__':
     main()
