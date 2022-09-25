@@ -9,6 +9,8 @@ from scipy.optimize import minimize
 from skimage.filters import gaussian, sobel_h, sobel_v, scharr_h, scharr_v, roberts_pos_diag, roberts_neg_diag, \
     prewitt_h, prewitt_v
 from skimage.transform import resize
+import torchvision.transforms as T
+import cv2
 
 ################## Gradient Operator #########################
 normal_h = lambda im: correlate(im, np.asarray([[0, -1, 1]]), mode='nearest')
@@ -27,7 +29,8 @@ gradient_operator = {
 
 
 def preprocess(im):
-    im = np.transpose(im * 2 - 1, (2, 0, 1)).astype(np.float32)
+    # im = np.transpose(im * 2 - 1, (2, 0, 1)).astype(np.float32)
+    im = np.transpose(im * 2.3 - 1, (2, 0, 1)).astype(np.float32)
     return im
 
 
@@ -184,31 +187,47 @@ GP-GAN: Towards Realistic High-Resolution Image Blending
     n_iteration: # of iterations for optimization
 """
 
+def show_tensor(tensor, save=False, index=0):
+    x = tensor.permute((0, 2, 3, 1))
+    if tensor.shape[0] != 0:  # if has batch, show only first image
+        x = x[0]
+    x = torch.squeeze(x, axis=0)
+    x = x.to('cpu').detach().numpy()
+    if x.shape[2] == 3:
+        x = cv2.cvtColor(x, cv2.COLOR_BGR2RGB)
+    if save:
+        cv2.imwrite("./%d.jpg" % (index), x * 255.0)
+    cv2.imshow("tensor", x)
+    cv2.waitKey()
 
-def gp_gan(obj, bg, mask, G, image_size, gpu, color_weight=1, sigma=0.5, gradient_kernel='normal', smooth_sigma=1,
+def gp_gan(obj, bg, mask, cp, G, image_size, gpu, color_weight=1, sigma=0.5, gradient_kernel='normal', smooth_sigma=1,
            supervised=True, nz=100, n_iteration=1000):
     w_orig, h_orig, _ = obj.shape
+    normalize = T.Compose([T.Normalize((0.5, 0.5, 0.5), (0.5, 0.5, 0.5))])
+    denormalize = T.Compose([T.Normalize((-0.5, -0.5, -0.5), (1/0.5, 1/0.5, 1/0.5))])
+
     ############################ Gaussian-Poisson GAN Image Editing ###########################
     # pyramid
     max_level = int(math.ceil(np.log2(max(w_orig, h_orig) / image_size)))
-    obj_im_pyramid, _ = laplacian_pyramid(obj, max_level, image_size, smooth_sigma)
+    obj_im_pyramid, _ = laplacian_pyramid(cp, max_level, image_size, smooth_sigma)
     bg_im_pyramid, _ = laplacian_pyramid(bg, max_level, image_size, smooth_sigma)
 
     # init GAN image
     mask_init = ndarray_resize(mask, (image_size, image_size), order=0)[:, :, np.newaxis]
+
+    # copy_paste_init = cv2.resize(cp, (64, 64))
     copy_paste_init = obj_im_pyramid[0] * mask_init + bg_im_pyramid[0] * (1 - mask_init)
 #     copy_paste_init_var = Variable(chainer.dataset.concat_examples([preprocess(copy_paste_init)], gpu))
     copy_paste_init_var = torch.tensor(preprocess(copy_paste_init)).unsqueeze(0).to(gpu)
-
     if supervised:
-        gan_im_var = G(copy_paste_init_var)
+        gan_im_var = denormalize(G(normalize(copy_paste_init_var)))
     else:
         z_init = np.random.normal(size=(nz, 1, 1))
         res = minimize(z_generate, z_init, args=(G, copy_paste_init_var, nz, gpu), method='L-BFGS-B', jac=True,
                        options={'maxiter': n_iteration, 'disp': False})
         z = np.reshape(res.x, (nz, 1, 1)).astype(np.float32)
         gan_im_var = G(torch.cat(z).to(gpu))
-    gan_im = np.clip(np.transpose((np.squeeze(gan_im_var.data.detach().cpu().numpy()) + 1) / 2, (1, 2, 0)), 0, 1).astype(
+    gan_im = np.clip(np.transpose((np.squeeze(gan_im_var.data.detach().cpu().numpy()) + 1) / 2.3, (1, 2, 0)), 0, 1).astype(
         obj.dtype)
 
     # Start pyramid

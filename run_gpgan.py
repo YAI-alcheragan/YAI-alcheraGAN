@@ -13,14 +13,29 @@ from skimage.io import imread, imsave
 from gp_gan import gp_gan
 from model import EncoderDecoder
 from blend_dataset import BlendingDataset
+import cv2
 
-import torchvision.transforms as T
 
 basename = lambda path: os.path.splitext(os.path.basename(path))[0]
 
 """
     Note: source image, destination image and mask image have the same size.
 """
+
+def show_tensor(tensor, save=False, index=0):
+    x = tensor.permute((0, 2, 3, 1))
+    if tensor.shape[0] != 0:  # if has batch, show only first image
+        x = x[0]
+    x = torch.squeeze(x, axis=0)
+    x = x.to('cpu').detach().numpy()
+    if x.shape[2] == 3:
+        x = cv2.cvtColor(x, cv2.COLOR_BGR2RGB)
+    if save:
+        cv2.imwrite("./%d.jpg" % (index), x * 255.0)
+    cv2.imshow("tensor", x)
+    cv2.waitKey()
+
+
 
 def load_weights(net, path):
     params = net.state_dict()
@@ -154,19 +169,24 @@ def main():
     test_loader = torch.utils.data.DataLoader(BlendingDataset(root= args.root, bg_folder=bg_folder, obj_folder=obj_folder, mode="test", load_size=128),
                                             batch_size=1, 
                                             shuffle=False,
-                                            drop_last=True)  
-    normalize_tf = T.Compose([T.Normalize((0.5, 0.5, 0.5), (0.5, 0.5, 0.5))])
+                                            drop_last=False)
 
     with torch.no_grad():
         G.eval()
 
         for idx, batch in enumerate(test_loader):
+            # show_tensor(batch["obj"])
+            # show_tensor(batch["mask"])
+            # show_tensor(batch["cp"])
             print('Processing {}/{} ...'.format(idx + 1, len(test_loader)))
-
-            norm_obj, norm_bg, mask = torch.squeeze(normalize_tf(batch["obj"])).cpu().numpy(), \
-            torch.squeeze(normalize_tf(batch["bg"])).cpu().numpy(), torch.squeeze(batch["mask"]).cpu().numpy()
-            norm_obj, norm_bg, mask = np.transpose(norm_obj,(1,2,0)), np.transpose(norm_bg,(1,2,0)) , np.transpose(mask,(1,2,0))
-            blended_im = gp_gan( norm_obj, norm_bg, mask[:,:,0] , G, args.image_size, args.gpu, color_weight=args.color_weight,
+            obj, bg, mask, cp = torch.squeeze(batch["obj"]).cpu().numpy(), \
+            torch.squeeze(batch["bg"]).cpu().numpy(), torch.squeeze(batch["mask"]).cpu().numpy(), \
+                                torch.squeeze(batch["cp"]).cpu().numpy()
+            #norm_obj, norm_bg, mask = torch.squeeze(normalize_tf(batch["obj"])).cpu().numpy(), \
+            #torch.squeeze(normalize_tf(batch["bg"])).cpu().numpy(), torch.squeeze(batch["mask"]).cpu().numpy()
+            obj, bg, mask, cp = np.transpose(obj,(1,2,0)), np.transpose(bg,(1,2,0)) , np.transpose(mask,(1,2,0)),\
+                            np.transpose(cp, (1, 2, 0))
+            blended_im = gp_gan(obj, bg, mask[:,:,0], cp, G, args.image_size, args.gpu, color_weight=args.color_weight,
                                 sigma=args.sigma,
                                 gradient_kernel=args.gradient_kernel, smooth_sigma=args.smooth_sigma,
                                 supervised=args.supervised,
@@ -175,7 +195,7 @@ def main():
             if args.blended_folder:
                 imsave('{}/obj_{}.png'.format(args.blended_folder, idx),blended_im) 
             else:
-                imsave('./obj_{}.png'.format(args.blended_folder, idx),blended_im)    
+                imsave('./obj_{}.png'.format(args.blended_folder, idx),blended_im)
 
 # # 수정 전 (-)
 #     # Init image list

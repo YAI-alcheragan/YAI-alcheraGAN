@@ -55,11 +55,12 @@ class BlendingDataset(Dataset):
 
         obj_path = self.obj_imgs[random_idx]
       ## 수정 전(-)  
-        # obj_label_path = obj_path.replace("jpg", "json")
+        obj_label_path = obj_path.replace("jpg", "json")
       ## 수정 후(+)
-        parent_dir, img_name = os.path.split(obj_path)
-        grandparent_dir = os.path.split(parent_dir)[0].replace("images", "labels")
-        obj_label_path = os.path.join(grandparent_dir, img_name ).replace("jpg", "json")
+        #parent_dir, img_name = os.path.split(obj_path)
+
+        #grandparent_dir = os.path.split(parent_dir)[0].replace("images", "labels")
+        #obj_label_path = os.path.join(grandparent_dir, img_name ).replace("jpg", "json")
         
         with open(obj_label_path, "r") as js_file:
             obj_label = json.load(js_file)
@@ -93,11 +94,11 @@ class BlendingDataset(Dataset):
 
         copy_paste = bg.copy()
         copy_paste[bg_crop_y:bg_crop_y+crop_h, bg_crop_x:bg_crop_x+crop_w] = obj_crop
-        copy_paste, bg, mask = self.transform(copy_paste), self.transform(bg), self.transform(mask)
+        # 기현
+        obj, copy_paste, bg, mask = self.transform(obj), self.transform(copy_paste), self.transform(bg), self.transform(mask)
 
-
-        #   return copy_paste, bg
-        return {"bg" : bg, "obj": copy_paste , "mask": mask}  #3 numpy inputs needed to run_gpgan
+        # 기현
+        return {"obj": obj, "bg" : bg, "cp": copy_paste , "mask": mask}  #3 numpy inputs needed to run_gpgan
 
 
 

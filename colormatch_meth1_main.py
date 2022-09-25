@@ -18,11 +18,14 @@ def get_colors(img, number_of_colors):
     clf = KMeans(n_clusters = number_of_colors)
     labels = clf.fit_predict(img)
     counts = Counter(labels)
+
     center_colors = clf.cluster_centers_
+
     # We get ordered colors by iterating through the keys
     ordered_colors = [center_colors[i] for i in counts.keys()]
     # hex_colors = [RGB2HEX(ordered_colors[i]) for i in counts.keys()]
-    rgb_colors = [ordered_colors[i] for i in counts.keys()]
+    rgb_colors = ordered_colors
+    # rgb_colors = [ordered_colors[i] for i in counts.keys()]
 
     return rgb_colors
 
@@ -32,7 +35,7 @@ def match_image_by_color(image, color, threshold = 60, number_of_colors = 10):
     selected_color = rgb2lab(np.uint8(np.asarray([[color]])))
 
     select_image = False
-    for i in range(number_of_colors):
+    for i in range(len(image_colors)):
         curr_color = rgb2lab(np.uint8(np.asarray([[image_colors[i]]])))
         diff = deltaE_cie76(selected_color, curr_color)
         if (diff < threshold):
@@ -52,9 +55,9 @@ def selectiveSearch(bg_img, cropped_img, num, search_cnt=500):
         # crop_location_img = bg_img[point[1]:point[1]+ch, point[0]:point[0]+cw]
         below_crop_location_img = bg_img[point[1]+ch-int(ch*0.2):point[1]+ch, point[0]:point[0]+cw]
         selected = match_image_by_color(below_crop_location_img, COLORS['GREEN'], 70, 3)
-        print(below_crop_location_img.shape)
+        #print(below_crop_location_img.shape)
 
-        print(i+1,"th image trial")
+        #print(i+1,"th image trial")
         if selected:
         # # 수정 전 (-)    
         #     bg_img[point[1]:point[1]+ch, point[0]:point[0]+cw] = cropped_img
@@ -67,11 +70,6 @@ def selectiveSearch(bg_img, cropped_img, num, search_cnt=500):
     if not i < search_cnt :
         print("selectiveSearch failed")
     return point
-
-
-    
-
-
 
 if __name__ == "__main__":
     number_of_imgs = 10
