@@ -23,6 +23,9 @@ basename = lambda path: os.path.splitext(os.path.basename(path))[0]
 """
 
 def show_tensor(tensor, save=False, index=0):
+    """
+    check image
+    """
     x = tensor.permute((0, 2, 3, 1))
     if tensor.shape[0] != 0:  # if has batch, show only first image
         x = x[0]
@@ -38,6 +41,9 @@ def show_tensor(tensor, save=False, index=0):
 
 
 def load_weights(net, path):
+    """
+    load pretrained/finetuned model weights from 'path' to 'net'
+    """
     params = net.state_dict()
     pretrained_weights = np.load(path, allow_pickle=True)
     with torch.no_grad(): 
@@ -96,6 +102,7 @@ def load_weights(net, path):
                     params[key].copy_(torch.from_numpy(pretrained_weights[npkey]).type(Tensor))
 
 def main():
+    '''Command Line Arguments'''
     parser = argparse.ArgumentParser(description='Gaussian-Poisson GAN for high-resolution image blending')
     parser.add_argument('--nef', type=int, default=64, help='# of base filters in encoder')
     parser.add_argument('--ngf', type=int, default=64, help='# of base filters in decoder or G')
@@ -111,29 +118,15 @@ def main():
     parser.add_argument('--gradient_kernel', type=str, default='normal', help='Kernel type for calc gradient')
     parser.add_argument('--smooth_sigma', type=float, default=1, help='Sigma for gaussian smooth of Laplacian pyramid')
 
-    parser.add_argument('--supervised', type=lambda x: x == 'True', default=True,
-                        help='Use unsupervised Blending GAN if False')
-    parser.add_argument('--nz', type=int, default=100, help='Size of the latent z vector')
-    parser.add_argument('--n_iteration', type=int, default=1000, help='# of iterations for optimizing z')
-
     parser.add_argument('--gpu', type=int, default=0, help='GPU ID (negative value indicates CPU)')
     parser.add_argument('--g_path', default='./blending_gan.npz', help='Path for pretrained Blending GAN model')
     parser.add_argument('--unsupervised_path', default='models/unsupervised_blending_gan.npz',
                         help='Path for pretrained unsupervised Blending GAN model')
     parser.add_argument('--list_path', default='',
                         help='File for input list in csv format: obj_path;bg_path;mask_path in each line')
-    parser.add_argument('--result_folder', default='blending_result', help='Name for folder storing results')
 
-# 수정 후 (+)
     parser.add_argument('--root', default='', help='Path for images : root/test/bg , root/test/smoke')
     parser.add_argument('--blended_folder', default='', help='Where to save blended image')
-
-# # 수정 전 (-)
-#     parser.add_argument('--src_image', default='', help='Path for source image')
-#     parser.add_argument('--dst_image', default='', help='Path for destination image')
-#     parser.add_argument('--mask_image', default='', help='Path for mask image')
-#     parser.add_argument('--blended_image', default='', help='Where to save blended image')
-
 
     args = parser.parse_args()
 
@@ -142,35 +135,34 @@ def main():
         print('\t{}: {}'.format(key, value))
     print('')
 
+    '''Device Setting'''
     if torch.cuda.is_available():
         device = torch.device('cuda')
     else:
         device = torch.device('cpu')
     
+    '''Load Pretrained/Finetuned Model'''
     G = EncoderDecoder(args.nef, args.ngf, args.nc, args.nBottleneck, image_size=args.image_size)
     print('Load pretrained Blending GAN model from {} ...'.format(args.g_path))
+    # Load Pretrained Model
     load_weights(G, args.g_path)
+    # Load Finetuned Model
     # G.load_state_dict(torch.load(args.g_path))
     G.to(device)
 
-
-
-
-
-# 수정 후 (+)
-
-
+    '''Generated Image Save Folder'''
     if not os.path.isdir(args.blended_folder):
         os.makedirs(args.blended_folder)
     print('Result will save to {} ...\n'.format(args.blended_folder))
 
-
+    '''Data Loader'''
     bg_folder, obj_folder = "bg", "smoke"       # obj1.jpg, obj1.json ... in /root/test/obj_folder
     test_loader = torch.utils.data.DataLoader(BlendingDataset(root= args.root, bg_folder=bg_folder, obj_folder=obj_folder, mode="test", load_size=128),
                                             batch_size=1, 
                                             shuffle=False,
                                             drop_last=False)
 
+    '''Evaluation'''
     with torch.no_grad():
         G.eval()
 
@@ -182,68 +174,14 @@ def main():
             obj, bg, mask, cp = torch.squeeze(batch["obj"]).cpu().numpy(), \
             torch.squeeze(batch["bg"]).cpu().numpy(), torch.squeeze(batch["mask"]).cpu().numpy(), \
                                 torch.squeeze(batch["cp"]).cpu().numpy()
-            #norm_obj, norm_bg, mask = torch.squeeze(normalize_tf(batch["obj"])).cpu().numpy(), \
-            #torch.squeeze(normalize_tf(batch["bg"])).cpu().numpy(), torch.squeeze(batch["mask"]).cpu().numpy()
             obj, bg, mask, cp = np.transpose(obj,(1,2,0)), np.transpose(bg,(1,2,0)) , np.transpose(mask,(1,2,0)),\
                             np.transpose(cp, (1, 2, 0))
             blended_im = gp_gan(obj, bg, mask[:,:,0], cp, G, args.image_size, args.gpu, color_weight=args.color_weight,
                                 sigma=args.sigma,
-                                gradient_kernel=args.gradient_kernel, smooth_sigma=args.smooth_sigma,
-                                supervised=args.supervised,
-                                nz=args.nz, n_iteration=args.n_iteration)
+                                gradient_kernel=args.gradient_kernel, smooth_sigma=args.smooth_sigma)
 
-            if args.blended_folder:
-                imsave('{}/obj_{}.png'.format(args.blended_folder, idx),blended_im) 
-            else:
-                imsave('./obj_{}.png'.format(args.blended_folder, idx),blended_im)
+            imsave('{}/obj_{}.png'.format(args.blended_folder, idx),blended_im)
 
-# # 수정 전 (-)
-#     # Init image list
-#     if args.list_path:
-#         print('Load images from {} ...'.format(args.list_path))
-#         with open(args.list_path) as f:
-#             test_list = [line.strip().split(';') for line in f]
-#         print('\t {} images in total ...\n'.format(len(test_list)))
-#     else:
-#         test_list = [(args.src_image, args.dst_image, args.mask_image)]
-
-#     if not args.blended_image:
-#         # Init result folder
-#         if not os.path.isdir(args.result_folder):
-#             os.makedirs(args.result_folder)
-#         print('Result will save to {} ...\n'.format(args.result_folder))
-
-#     total_size = len(test_list)
-#     for idx in range(total_size):
-#         print('Processing {}/{} ...'.format(idx + 1, total_size))
-
-#         # load image
-#         obj = img_as_float(imread(test_list[idx][0]))
-#         bg = img_as_float(imread(test_list[idx][1]))
-#         mask = imread(test_list[idx][2], as_gray=True).astype(obj.dtype)
-
-#         # # 수정 전
-#         # with chainer.using_config("train", False):
-#         #     blended_im = gp_gan(obj, bg, mask, G, args.image_size, args.gpu, color_weight=args.color_weight,
-#         #                         sigma=args.sigma,
-#         #                         gradient_kernel=args.gradient_kernel, smooth_sigma=args.smooth_sigma,
-#         #                         supervised=args.supervised,
-#         #                         nz=args.nz, n_iteration=args.n_iteration)
-#         # 수정 후
-#         G.eval()
-#         with torch.no_grad():
-#             blended_im = gp_gan(obj, bg, mask, G, args.image_size, args.gpu, color_weight=args.color_weight,
-#                                 sigma=args.sigma,
-#                                 gradient_kernel=args.gradient_kernel, smooth_sigma=args.smooth_sigma,
-#                                 supervised=args.supervised,
-#                                 nz=args.nz, n_iteration=args.n_iteration)
-#         if args.blended_image:
-#             imsave(args.blended_image, blended_im)
-#         else:
-#             imsave('{}/obj_{}_bg_{}_mask_{}.png'.format(args.result_folder, basename(test_list[idx][0]),
-#                                                         basename(test_list[idx][1]), basename(test_list[idx][2])),
-#                    blended_im)
-    
 
 
 if __name__ == '__main__':
