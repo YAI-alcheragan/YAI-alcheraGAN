@@ -29,21 +29,21 @@
 
 This dataset contains wildfire images that are given as detected sets from Alchera, AI technology development company based on face & anomalous situation detection (e.g. wildfire).
 
-In total the dataset contains 10k wild forest images of size 640x480: 5k in confirmed(detected as wildfire situation) and the other 5k in skipped(detected as nothing-happened) as jpg images, each with a bbox position for detective area that is classified as a situation as JSON file
+In total the dataset contains 20k wild forest images of size 640x480: 10k in confirmed(detected as wildfire situation) and the other 10k in skipped(detected as nothing-happened) as jpg images, each with a bbox position for detective area that is classified as a situation as JSON file
 
 We generated segmentation mask dataset folder for the confirmed dataset mentioned above, each has same label(image name) for a target of segmentation. This particular directory includes segmented binary masks of size 640x480, following original target image's. A actual area of smoke has size of 128x128 which it's center position is derived from a given image's bbox
 
-Additional dataset called Smoke5K, which used for segmentation model train([UNet++: A Nested U-Net Architecture for Medical Image Segmentation](https://arxiv.org/abs/1807.10165)), has 5,360 images that are mixture of real and synthetic smoke images and the other 7K non-smoke images. For preventing overfitting of the segmentation and maintaining naturality of the segmented smoke from general images, we tried to train the model with an unaffective smoke set so we chose this dataset.
+Additional dataset called Smoke5K, which used for segmentation model train([UNet++: A Nested U-Net Architecture for Medical Image Segmentation](https://arxiv.org/abs/1807.10165)), has 5,400 images that are mixture of real(1,400) and synthetic(4,000) smoke images. For preventing overfitting of the segmentation and maintaining naturality of the segmented smoke from general images, we tried to train the model with an unaffective smoke set so we chose this dataset.
 
-The files within each fold directories are:
+The files within each fold directories except the additional dataset are:
 
-* `confirmed/#/images/` - directory contains 5k of 640x480 jpg images
+* `confirmed/#/images/` - directory contains 10k of 640x480 jpg images
 
-* `confirmed/#/labels/` - directory contains 5k of json labels for the directory mentioned above ([left, up, right, bottom]
+* `confirmed/#/labels/` - directory contains 10k of json labels for the directory mentioned above ([left, up, right, bottom]
 
-* `confirmed/#/masks/` - directory contains 5k of segmented masks for the directory mentioned above
+* `confirmed/#/masks/` - directory contains 10k of segmented masks for the directory mentioned above
 
-* `skipped/` - directory contains 5k of 640x480 normal wild forest images
+* `skipped/` - directory contains 10k of 640x480 normal wild forest images
 
 ### Data Preview
 
@@ -53,7 +53,7 @@ The files within each fold directories are:
 
 * [**Alchera**](https://alchera.ai/)
 
-* [**Smoke5K**](https://ojs.aaai.org/index.php/AAAI/article/view/20207) - [**Github**](https://github.com/redlessme/Transmission-BVM))
+* [**Smoke5K**](https://ojs.aaai.org/index.php/AAAI/article/view/20207) - [**Github**](https://github.com/redlessme/Transmission-BVM)
 
 ---
 
@@ -71,11 +71,9 @@ The files within each fold directories are:
 
 * **Implementation**: [Pytorch Vision](https://github.com/4uiiurz1/pytorch-nested-unet)
 
-**Color Match**: Determine Mask Postion
+**Color Match**: Determine Mask Postion Depending on Color Distribution
 
-* **Paper**: [NEED Arxiv CITATION](NEED LINK)
-
-* **Implementation**: [Pytorch Vision](NEED LINK)
+* **Implementation**: [OpenCV](https://github.com/kb22/Color-Identification-using-Machine-Learning)
 
 ## Metrics
 
@@ -90,7 +88,9 @@ The files within each fold directories are:
   $$
   \text{KID} = E_{x, x^{\prime}p}[K(x,x^{\prime})]+E_{x,x^{\prime}q}[K(x,x^{\prime})]-2E_{xp,x^{\prime}p}[K(x,x^{\prime})]
   $$
+  $$
   
+  [**Density and Convergence**](https://github.com/clovaai/generative-evaluation-prdc)
   3. **Density**
   
   $$
