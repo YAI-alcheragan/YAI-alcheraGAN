@@ -1,0 +1,7 @@
+# Model files
+*.npz
+*.pt
+
+# Image Dataset
+datasets/
+blending_result/
