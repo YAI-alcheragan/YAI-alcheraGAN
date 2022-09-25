@@ -10,7 +10,7 @@ def init_bn(array):
     xp = torch.tensor(array)
     array[...] = xp.random.normal(loc=1.0, scale=0.02, size=array.shape)
 
-
+'''Generator (Decoder)'''
 class DCGAN_G(nn.Module):
     def __init__(self, isize, nc, ngf, nBottleneck, conv_init=None, bn_init=None):
         super().__init__()
@@ -39,7 +39,7 @@ class DCGAN_G(nn.Module):
             x = self.layers[i](x)
         return x
 
-
+'''Discriminator (Encoder)'''
 class DCGAN_D(nn.Module):
     def __init__(self, isize, ndf, nz=1, conv_init=None, bn_init=None):
         super().__init__()
@@ -69,7 +69,7 @@ class DCGAN_D(nn.Module):
         x = torch.sum(x, axis=0) / x.shape[0]
         return torch.squeeze(x)
 
-
+'''Encoder Decoder (Discriminator+Generator)'''
 class EncoderDecoder(nn.Module):
     def __init__(self, nef, ngf, nc, nBottleneck, image_size=64, conv_init=None, bn_init=None):
         super().__init__()

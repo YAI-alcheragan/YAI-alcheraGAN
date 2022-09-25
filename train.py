@@ -58,13 +58,16 @@ class Trainer:
 
         self.args = parser.parse_args()
 
+        '''generated image save folder'''
         if not os.path.isdir(self.args.save_img_path):
             os.mkdir(self.args.save_img_path)
+        '''trained model save folder'''
         if not os.path.isdir(self.args.save_model_path):
             os.mkdir(self.args.save_model_path)
             os.mkdir(os.path.join(self.args.save_model_path, "g"))
             os.mkdir(os.path.join(self.args.save_model_path, "d"))
-
+        
+        '''random seed'''
         random.seed(self.args.manual_seed)
         torch.manual_seed(self.args.manual_seed)
         np.random.seed(self.args.manual_seed)
