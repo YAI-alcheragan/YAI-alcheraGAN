@@ -88,10 +88,10 @@ The files within each fold directories except the additional dataset are:
   $$
   \text{KID} = E_{x, x^{\prime}p}[K(x,x^{\prime})]+E_{x,x^{\prime}q}[K(x,x^{\prime})]-2E_{xp,x^{\prime}p}[K(x,x^{\prime})]
   $$
-  $$
   
-  [**Density and Convergence**](https://github.com/clovaai/generative-evaluation-prdc)
   $$
+  [**Density and Convergence**](https://github.com/clovaai/generative-evaluation-prdc):
+  
   3. **Density**
   
   $$
