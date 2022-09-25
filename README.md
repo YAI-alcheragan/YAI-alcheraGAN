@@ -1,4 +1,4 @@
-# YAI-Alchera Project : Wildfire Generator
+# YAI-Alchera Project : Wildfire Image Generator
 
 
 > ***Repository*** : https://github.com/YAI-alcheragan/YAI-alcheraGAN
@@ -7,47 +7,51 @@
 
 **[YAI](https://www.instagram.com/yonsei.ai) 10th 2022 Summer Project - AlcehraGAN Team**
 
-* Team Leader : **[Kihyun Kim](https://github.com/)** - Yonsei Univ. Dept of .
+* Team Leader : **[Gihyun Kim](https://github.com/gihyunkim)** - Yonsei Univ. Dept of Artificial Intelligence.
 
 * Team Member : **[Donggeon Bae](https://github.com/AttiBae)** - Yonsei. Univ. Dept. of Electrical and Electronic Engineering.
 
-* Team Member : **[Subin Kang](https://github.com/)** - Yonsei Univ. Dept. .
+* Team Member : **[Jungbin Cho](https://github.com/whwjdqls)** - Yonsei. Univ. Dept. of Electrical and Electronic Engineering.
 
-* Team Member : **[Jungbin Joe](https://github.com/)** - Yonsei Univ. Dept. .
+* Team Member : **[Minjae Lee](https://github.com/98minjae)** - Yonsei Univ. Dept. of Creative Technology Management.
 
-* Team Member : **[Sangheon Lee](https://github.com/)** - Yonsei Univ. Dept. .
+* Team Member : **[Sangheon Lee](https://github.com/lsh-159)** - Yonsei. Univ. Dept. of Electrical and Electronic Engineering.
 
-* Team Member : **[Minjae Lee](https://github.com/)** - Yonsei Univ. Dept. .
+* Team Member : **[Subin Kang](https://github.com/suuuuuuuubin)** - Yonsei Univ. Dept. Computer Science.
 
 ---
 
 ## Dataset
 
-> ***Wildfire Dataset from Alchera : https://alchera.ai/company/about-alchera***
+> ***Wildfire Dataset Taken from Alchera Wildfire Detection : https://alchera.ai/***
 
 ### Data Description
 
-This particular directory includes training patches of size 256x256 and their masks, this is one of the folds. In total there are more than 7 thousand training patches within all the three folds.
+This dataset contains wildfire images that are given as detected sets from Alchera, AI technology development company based on face & anomalous situation detection (e.g. wildfire).
+
+In total the dataset contains 10k wild forest images of size 640x480: 5k in confirmed(detected as wildfire situation) and the other 5k in skipped(detected as nothing-happened) as jpg images, each with a bbox position for detective area that is classified as a situation as JSON file
+
+We generated segmentation mask dataset folder for the confirmed dataset mentioned above, each has same label(image name) for a target of segmentation. This particular directory includes segmented binary masks of size 640x480, following original target image's. A actual area of smoke has size of 128x128 which it's center position is derived from a given image's bbox
+
+Additional dataset called Smoke5K, which used for segmentation model train, has 5,360 images that are mixture of real and synthetic smoke images and the other 7K non-smoke images. For preventing overfitting of the segmentation and maintaining naturality of the segmented smoke from general images, we tried to train the model with an unaffective smoke set so we chose this dataset.
 
 The files within each fold directories are:
 
-* `images.npy` - image patches of 256x256
+* `confirmed/#/images/` - directory contains 5k of 640x480 jpg images
 
-* `masks.npy` an array of 6 channel instance-wise masks (0: Neoplastic cells, 1: Inflammatory, 2: Connective/Soft tissue cells, 3: Dead Cells, 4: Epithelial, 6: Background)
+* `confirmed/#/labels/` - directory contains 5k of json labels for the directory mentioned above ([left, up, right, bottom]
 
-* `types.npy`  tissue type that a given path was extracted from.
+* `confirmed/#/masks/` - directory contains 5k of segmented masks for the directory mentioned above
+
+* `skipped/` - directory contains 5k of 640x480 normal wild forest images
 
 ### Data Preview
 
-![Preview](./assets/asset1.png)
+![Preview](NEED LINK)
 
-### Origin: Kaggle
+### Origin: Alchera
 
-* [**#1**](https://www.kaggle.com/andrewmvd/cancer-inst-segmentation-and-classification): 12.53GiB
-
-* [**#2**](https://www.kaggle.com/andrewmvd/cancer-instance-segmentation-and-classification-2): 11.91GiB
-
-* [**#3**](https://www.kaggle.com/andrewmvd/cancer-instance-segmentation-and-classification-3): 12.84GiB
+* [**!**](https://alchera.ai/)
 
 ---
 
@@ -55,9 +59,9 @@ The files within each fold directories are:
 
 **GP-GAN**: Backbone
 
-* **Paper**: [NEED Arxiv CITATION](NEED LINK)
+* **Paper**: [ArXiv 1703.07195](https://arxiv.org/abs/1703.07195)
 
-* **Implementation**: [Pytorch Vision](NEED LINK)
+* **Implementation**: [Pytorch Vision](https://github.com/wuhuikai/GP-GAN)
 
 **Wildfire Segmentation**: Generate Mask
 
@@ -73,21 +77,26 @@ The files within each fold directories are:
 
 ## Metrics
 
-
-- Cost function - Hybrid Loss
-
-  $$
-  \text{Loss} = 2\times \text{BCE } + 2 \times \text{Dice } + \text{IoU}
-  $$
-
-  1. **Binary Cross Entropy**
+  1. **FID**
 
   $$
-  \text{BCE} = - \sum _{i=1} ^{\text{output size}} y_i \cdot \log {\hat{y}_i}
+  \text{FID} = ||\mu_x-\mu_y ||^2 + \text{Tr}(\Sigma_\text{x} + \Sigma_\text{y} - 2\sqrt{\Sigma_\text{x}\Sigma_\text{y}})
   $$
 
+  2. **KID**
+  $$
+  \text{KID} = E_{x,x^{\prime}p}[K(x,x^{\prime})]+E_{x,x^{\prime}q}[K(x,x^{\prime})]-2E_{xp,x^{\prime}p}[K(x,x^{\prime})]
+  $$
   
-- Optimizing - **Stochastic Gradient Descent with Adam(IF IT ANALISED)**
+  3. **Density**
+  $$
+  <a href="https://www.codecogs.com/eqnedit.php?latex=\fn_cm&space;\text{density}:=\frac{1}{kM}\sum_{j=1}^{M}\sum_{i=1}^{N}1_{Y_j\in&space;B(X_i,\text{NND}_k(X_i))}" target="_blank"><img src="https://latex.codecogs.com/svg.latex?\fn_cm&space;\text{Density}:=\frac{1}{kM}\sum_{j=1}^{M}\sum_{i=1}^{N}1_{Y_j\in&space;B(X_i,\text{NND}_k(X_i))}" title="\text{density}:=\frac{1}{kM}\sum_{j=1}^{M}\sum_{i=1}^{N}1_{Y_j\in B(X_i,\text{NND}_k(X_i))}" /></a>
+  $$
+  
+  4. **Converage**
+  $$
+  <a href="https://www.codecogs.com/eqnedit.php?latex=\fn_cm&space;\text{Coverage}:=\frac{1}{N}\sum_{i=1}^{N}1_{\exists\text{&space;}j\text{&space;s.t.&space;}&space;Y_j\in&space;B(X_i,\text{NND}_k(X_i))}" target="_blank"><img src="https://latex.codecogs.com/svg.latex?\fn_cm&space;\text{coverage}:=\frac{1}{N}\sum_{i=1}^{N}1_{\exists\text{&space;}j\text{&space;s.t.&space;}&space;Y_j\in&space;B(X_i,\text{NND}_k(X_i))}" title="\text{coverage}:=\frac{1}{N}\sum_{i=1}^{N}1_{\exists\text{ }j\text{ s.t. } Y_j\in B(X_i,\text{NND}_k(X_i))}" /></a>
+  $$
 
 ---
 
@@ -113,6 +122,6 @@ The files within each fold directories are:
 
 ## Full Source Code
 
-* Github: [https://github.com/YAI-alcheragan/YAI-alcheraGAN]()
+* Github: [https://github.com/YAI-alcheragan/YAI-alcheraGAN]
 
 All non-necessary codes are modularized as package. Watch all codes in github repository.
