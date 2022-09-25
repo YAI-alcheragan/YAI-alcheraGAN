@@ -92,13 +92,13 @@ The files within each fold directories are:
   3. **Density**
   
   $$
-  <a href="https://www.codecogs.com/eqnedit.php?latex=\fn_cm&space;\text{density}:=\frac{1}{kM}\sum_{j=1}^{M}\sum_{i=1}^{N}1_{Y_j\in&space;B(X_i,\text{NND}_k(X_i))}" target="_blank"><img src="https://latex.codecogs.com/svg.latex?\fn_cm&space;\text{Density}:=\frac{1}{kM}\sum_{j=1}^{M}\sum_{i=1}^{N}1_{Y_j\in&space;B(X_i,\text{NND}_k(X_i))}" title="\text{density}:=\frac{1}{kM}\sum_{j=1}^{M}\sum_{i=1}^{N}1_{Y_j\in B(X_i,\text{NND}_k(X_i))}" /></a>
+  \text{density} := \frac{1}{kM}\sum_{j=1}^{M}\sum_{i=1}^{N}1_{Y_j\in B(X_i,\text{NND}_k(X_i))}
   $$
   
   4. **Converage**
   
   $$
-  <a href="https://www.codecogs.com/eqnedit.php?latex=\fn_cm&space;\text{Coverage}:=\frac{1}{N}\sum_{i=1}^{N}1_{\exists\text{&space;}j\text{&space;s.t.&space;}&space;Y_j\in&space;B(X_i,\text{NND}_k(X_i))}" target="_blank"><img src="https://latex.codecogs.com/svg.latex?\fn_cm&space;\text{coverage}:=\frac{1}{N}\sum_{i=1}^{N}1_{\exists\text{&space;}j\text{&space;s.t.&space;}&space;Y_j\in&space;B(X_i,\text{NND}_k(X_i))}" title="\text{coverage}:=\frac{1}{N}\sum_{i=1}^{N}1_{\exists\text{ }j\text{ s.t. } Y_j\in B(X_i,\text{NND}_k(X_i))}" /></a>
+  \text{coverage} := \frac{1}{N}\sum_{i=1}^{N}1_{\exists\text{ }j\text{ s.t. } Y_j\in B(X_i,\text{NND}_k(X_i))}
   $$
 
 ---
