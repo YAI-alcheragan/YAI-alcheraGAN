@@ -33,7 +33,7 @@ In total the dataset contains 10k wild forest images of size 640x480: 5k in conf
 
 We generated segmentation mask dataset folder for the confirmed dataset mentioned above, each has same label(image name) for a target of segmentation. This particular directory includes segmented binary masks of size 640x480, following original target image's. A actual area of smoke has size of 128x128 which it's center position is derived from a given image's bbox
 
-Additional dataset called Smoke5K, which used for segmentation model train, has 5,360 images that are mixture of real and synthetic smoke images and the other 7K non-smoke images. For preventing overfitting of the segmentation and maintaining naturality of the segmented smoke from general images, we tried to train the model with an unaffective smoke set so we chose this dataset.
+Additional dataset called Smoke5K, which used for segmentation model train([UNet++: A Nested U-Net Architecture for Medical Image Segmentation](https://arxiv.org/abs/1807.10165)), has 5,360 images that are mixture of real and synthetic smoke images and the other 7K non-smoke images. For preventing overfitting of the segmentation and maintaining naturality of the segmented smoke from general images, we tried to train the model with an unaffective smoke set so we chose this dataset.
 
 The files within each fold directories are:
 
@@ -49,9 +49,11 @@ The files within each fold directories are:
 
 ![Preview](NEED LINK)
 
-### Origin: Alchera
+### Origin
 
-* [**!**](https://alchera.ai/)
+* [**Alchera**](https://alchera.ai/)
+
+* [**Smoke5K**](https://ojs.aaai.org/index.php/AAAI/article/view/20207) - [**Github**](https://github.com/redlessme/Transmission-BVM))
 
 ---
 
@@ -65,9 +67,9 @@ The files within each fold directories are:
 
 **Wildfire Segmentation**: Generate Mask
 
-* **Paper**: [NEED Arxiv CITATION](NEED LINK)
+* **Paper**: [ArXiv 1807.10165](https://arxiv.org/abs/1807.10165)
 
-* **Implementation**: [Pytorch Vision](NEED LINK)
+* **Implementation**: [Pytorch Vision](https://github.com/4uiiurz1/pytorch-nested-unet)
 
 **Color Match**: Determine Mask Postion
 
@@ -92,13 +94,13 @@ The files within each fold directories are:
   3. **Density**
   
   $$
-  \text{density} := \frac{1}{kM}\sum_{j=1}^{M}\sum_{i=1}^{N}1_{Y_j\in B(X_i,\text{NND}_k(X_i))}
+  \text{Density} := \frac{1}{kM}\sum_{j=1}^{M}\sum_{i=1}^{N}1_{Y_j\in B(X_i,\text{NND}_k(X_i))}
   $$
   
   4. **Converage**
   
   $$
-  \text{coverage} := \frac{1}{N}\sum_{i=1}^{N}1_{\exists\text{ }j\text{ s.t. } Y_j\in B(X_i,\text{NND}_k(X_i))}
+  \text{Coverage} := \frac{1}{N}\sum_{i=1}^{N}1_{\exists\text{ }j\text{ s.t. } Y_j\in B(X_i,\text{NND}_k(X_i))}
   $$
 
 ---
