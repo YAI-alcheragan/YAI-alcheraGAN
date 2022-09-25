@@ -5,7 +5,6 @@ import random
 from torch.utils.data import DataLoader
 from blend_dataset import BlendingDataset
 from model import *
-# import cv2
 from torch.nn import functional as F
 from torchvision.utils import save_image
 # import vessl
@@ -16,6 +15,7 @@ NGPU = torch.cuda.device_count()
 
 class Trainer:
     def __init__(self):
+        '''Command Line Arguments'''
         parser = argparse.ArgumentParser(description='Train Blending GAN')
         parser.add_argument('--nef', type=int, default=64, help='# of base filters in encoder')
         parser.add_argument('--ngf', type=int, default=64, help='# of base filters in decoder')
@@ -72,9 +72,10 @@ class Trainer:
         '''loss'''
         self.criterion = F.mse_loss
 
-        '''Model'''
+        '''model'''
         self.generator = EncoderDecoder(self.args.nef, self.args.ngf, self.args.nc, self.args.nBottleneck,
                                         image_size=self.args.size, conv_init=init_conv, bn_init=init_bn).to(device)
+        #load pretrained model
         if self.args.pretrained:
             print("use pretrained model")
             self.load_weights(self.generator, "./blending_gan.npz")
@@ -89,7 +90,7 @@ class Trainer:
             self.generator = torch.nn.DataParallel(self.generator, device_ids=list(range(NGPU)))
             self.discriminator = torch.nn.DataParallel(self.discriminator, device_ids=list(range(NGPU)))
 
-        '''Data Load'''
+        '''dataloader'''
         self.dataset = BlendingDataset(self.args.data_root, bg_folder=self.args.bg_dir, obj_folder=self.args.obj_dir,
                                        mode=self.args.mode, load_size=self.args.size)
         self.loader = DataLoader(self.dataset, batch_size=self.args.batch_size, shuffle=True, num_workers=0, drop_last=True)
@@ -155,19 +156,7 @@ class Trainer:
                         print("Weight found for " + npkey + " layer")
                         params[key].copy_(torch.from_numpy(pretrained_weights[npkey]).type(torch.Tensor))
 
-    # def show_tensor(self, tensor, save=False, index=0):
-    #     x = tensor.permute((0, 2, 3, 1))
-    #     if tensor.shape[0] != 0: # if has batch, show only first image
-    #         x = x[0]
-    #     x = torch.squeeze(x, axis=0)
-    #     x = x.to('cpu').detach().numpy()
-    #     if x.shape[2] == 3:
-    #         x = cv2.cvtColor(x, cv2.COLOR_BGR2RGB)
-    #     if save:
-    #         cv2.imwrite("./%d.jpg"%(index), x*255.0)
-    #     cv2.imshow("tensor", x)
-    #     cv2.waitKey()
-
+    '''train'''
     def train(self):
         total_iter = int(len(self.loader.dataset)/self.args.batch_size)
         cnt_iter = 1
@@ -181,7 +170,6 @@ class Trainer:
                    Diters = 10
                 else:
                    Diters = 1
-                #Diters = 1
 
                 '''train discriminator first'''
                 self.generator.requires_grad_(False)
