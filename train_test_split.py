@@ -32,7 +32,8 @@ def makeTrainTestDataset(img_paths, dst_path, label="smoke"):
 
 smoke_path = "./datasets/confirmed"
 bg_path = "./datasets/skipped"
-mask_path = "./datasets/mask"
+# 상헌
+# mask_path = "./datasets/mask"
 
 train_path = "./datasets/train"
 test_path = "./datasets/test"
@@ -42,7 +43,10 @@ split_ratio = 0.9
 
 smoke_img_paths = glob.glob(smoke_path+"/*/images/cur/*.jpg")
 bg_img_paths = glob.glob(bg_path+"/*/images/cur/*.jpg")
-mask_img_paths = glob.glob(mask_path+"/*.jpg")
+
+# 상헌
+# mask_img_paths = glob.glob(mask_path+"/*.jpg")
+mask_img_paths = glob.glob(smoke_path+"/*/masks/*.jpg")
 
 smoke_img_paths.sort()
 mask_img_paths.sort()

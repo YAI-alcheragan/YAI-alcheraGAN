@@ -56,8 +56,9 @@ def selectiveSearch(bg_img, cropped_img, num, search_cnt=500):
         below_crop_location_img = bg_img[point[1]+ch-int(ch*0.2):point[1]+ch, point[0]:point[0]+cw]
         selected = match_image_by_color(below_crop_location_img, COLORS['GREEN'], 70, 3)
         #print(below_crop_location_img.shape)
-
-        #print(i+1,"th image trial")
+        
+        if (i+1)%50 ==0 :
+          print(i+1,"th image trial")
         if selected:
         # # 수정 전 (-)    
         #     bg_img[point[1]:point[1]+ch, point[0]:point[0]+cw] = cropped_img

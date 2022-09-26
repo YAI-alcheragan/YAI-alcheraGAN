@@ -209,7 +209,7 @@ def gp_gan(obj, bg, mask, cp, G, image_size, gpu, color_weight=1, sigma=0.5, gra
     ############################ Gaussian-Poisson GAN Image Editing ###########################
     # pyramid
     max_level = int(math.ceil(np.log2(max(w_orig, h_orig) / image_size)))
-    obj_im_pyramid, _ = laplacian_pyramid(cp, max_level, image_size, smooth_sigma)
+    obj_im_pyramid, _ = laplacian_pyramid(obj, max_level, image_size, smooth_sigma)
     bg_im_pyramid, _ = laplacian_pyramid(bg, max_level, image_size, smooth_sigma)
 
     # init GAN image
