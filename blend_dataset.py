@@ -1,5 +1,4 @@
 import os
-# import pandas as pd
 import json
 import numpy as np
 from PIL import Image, ImageFile
@@ -136,9 +135,7 @@ class BlendingDataset(Dataset):
         return T.Compose([
             T.ToPILImage(),
             T.Resize([self.load_size, self.load_size]),
-            T.ToTensor(),
-          # 수정 (-) : gpgan.py에서 normalize
-            #T.Normalize((0.5, 0.5, 0.5), (0.5, 0.5, 0.5))
+            T.ToTensor()
             ])
 
 if __name__ == "__main__":

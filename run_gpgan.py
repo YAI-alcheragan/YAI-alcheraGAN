@@ -2,8 +2,6 @@ import argparse
 import os
 import numpy as np
 
-# import chainer
-# from chainer import cuda, serializers
 import torch
 from torch import Tensor
 from torchvision.utils import save_image
