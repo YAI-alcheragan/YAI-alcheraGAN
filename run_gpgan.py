@@ -6,6 +6,7 @@ import numpy as np
 # from chainer import cuda, serializers
 import torch
 from torch import Tensor
+from torchvision.utils import save_image
 
 from skimage import img_as_float
 from skimage.io import imread, imsave
@@ -156,12 +157,20 @@ def main():
     print('Result will save to {} ...\n'.format(args.blended_folder))
 
     '''Data Loader'''
-    bg_folder, obj_folder = "bg", "smoke"       # obj1.jpg, obj1.json ... in /root/test/obj_folder
-    test_loader = torch.utils.data.DataLoader(BlendingDataset(root= args.root, bg_folder=bg_folder, obj_folder=obj_folder, mode="test", load_size=128),
+    bg_folder, obj_folder = "confirmd", "confirmed"       # obj1.jpg, obj1.json ... in /root/test/obj_folder
+    test_loader = torch.utils.data.DataLoader(BlendingDataset(root= args.root, bg_folder=bg_folder, obj_folder=obj_folder, mode="", load_size=256),
                                             batch_size=1, 
                                             shuffle=False,
                                             drop_last=False)
-
+    
+    '''Transform'''
+    import torchvision.transforms as T                                         
+    temp_tf = T.Compose([
+                T.ToPILImage(),
+                T.Resize([256, 256]),
+                T.ToTensor(),
+              ])
+    
     '''Evaluation'''
     with torch.no_grad():
         G.eval()
@@ -176,11 +185,42 @@ def main():
                                 torch.squeeze(batch["cp"]).cpu().numpy()
             obj, bg, mask, cp = np.transpose(obj,(1,2,0)), np.transpose(bg,(1,2,0)) , np.transpose(mask,(1,2,0)),\
                             np.transpose(cp, (1, 2, 0))
+            # output image
             blended_im = gp_gan(obj, bg, mask[:,:,0], cp, G, args.image_size, args.gpu, color_weight=args.color_weight,
                                 sigma=args.sigma,
                                 gradient_kernel=args.gradient_kernel, smooth_sigma=args.smooth_sigma)
+            blended_torch = temp_tf(blended_im)
 
-            imsave('{}/obj_{}.png'.format(args.blended_folder, idx),blended_im)
+            # show result
+            result_before1 = torch.cat([
+                    batch["obj"].data.cpu()[0],
+                    batch["mask_old"].data.cpu()[0], 
+                    batch["cropped_obj"].data.cpu()[0],
+                    batch["cropped_mask"].data.cpu()[0]], 2)
+
+            result_before2 = torch.cat([
+                    batch["bg"].data.cpu()[0],
+                    batch["mask"].data.cpu()[0],
+                    batch["cp"].data.cpu()[0], 
+                    blended_torch.data.cpu()], 2)       
+
+            result_before3 = torch.cat([
+                    batch["mask"].data.cpu()[0],
+                    batch["cp_old"].data.cpu()[0],
+                    batch["cp"].data.cpu()[0], 
+                    blended_torch.data.cpu()], 2)       
+
+            result_total = torch.cat([result_before1,result_before2, result_before3], 1)             
+
+            if args.blended_folder:
+                save_image(result_total,'%s/total_%s.png' % (args.blended_folder,idx))
+                #imsave('{}/after_{}.png'.format(args.blended_folder, idx),blended_im) 
+            else:
+                imsave('./obj_{}.png'.format(args.blended_folder, idx),blended_im)
+
+            if idx == 50 :
+                print("reach MAX_IDX, end GPGAN")
+                break
 
 
 

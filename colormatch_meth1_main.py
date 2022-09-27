@@ -60,7 +60,8 @@ def selectiveSearch(bg_img, cropped_img, num, search_cnt=500):
         point = (random.randint(0, w - cw), random.randint(0, h - ch))
         below_crop_location_img = bg_img[point[1]+ch-int(ch*0.2):point[1]+ch, point[0]:point[0]+cw]
         selected = match_image_by_color(below_crop_location_img, COLORS['GREEN'], 70, 3)
-
+        if (i+1)%50 == 0:
+            print(i+1, "th image trial")
         if selected:
             found = True
         i+=1
