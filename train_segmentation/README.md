@@ -1,3 +1,27 @@
+# Training Smoke Segmentation Model
+
+Training [UNet++](https://arxiv.org/pdf/1807.10165.pdf) using [Smoke5K dataset](https://drive.google.com/file/d/11TM8hsh9R6ZTvLAUzfD6eD051MbOufCi/view?usp=sharing) from [Transmission-BVM](https://github.com/redlessme/Transmission-BVM) to make masks of smoke in wildfire images
+
+
+Original SMOKE5K dataset
+```
+SMOKE5K/
+    ├── test/
+    │   ├─ gt_/
+    │   │  └─ (400 masks)
+    │   └─ img/
+    │      └─ (400 real life smoke)
+    └── train/
+        ├─ gt_/
+        │  ├─ (4000 masks)
+        │  └─ (960 masks)
+        └─ img/
+           ├─ (4000 synthetic smoke)
+           └─ (960 real life smoke)
+
+```
+
+[UNet++ : A Nested U-Net Architecture for Medical Image Segmentation](https://arxiv.org/pdf/1807.10165.pdf).
 
 ## Installation
 1. Create an anaconda environment.
@@ -19,7 +43,7 @@ Make sure to put the files as the following structure (e.g. the number of classe
 inputs
 └── <dataset name>
     ├── images
-    |   ├── 0a7e06.jpg
+    │   ├── 0a7e06.jpg
     │   ├── 0aab0a.jpg
     │   ├── 0b1761.jpg
     │   ├── ...
@@ -36,6 +60,17 @@ inputs
             ├── 0aab0a.png
             ├── 0b1761.png
             ├── ...
+```
+
+Real life only data set from SMOKE5K
+```
+inputs/
+└── SMOKE5K/
+   ├─ images/
+   │    └── (1360 real life smoke)
+   └─ masks/
+        └── 0/
+            └── (1360 masks)
 ```
 
 1. Train the model.
