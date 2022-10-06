@@ -126,6 +126,25 @@ The files within each fold directories except the additional dataset are:
 
 ---
 
+## Pretrained models & Inference
+
+To inference, 
+
+!python inference_gpgan.py --root ./datasets --result_folder ./experiment --g_path ./blending_gan.npz 
+
+**GP-GAN**: Blending GAN G(x)
+
+* **blending_gan.npz**: [download](https://drive.google.com/uc?export=download&id=11L-n9cERvQJXkOLYGaOS-jyAt6gH6mHq)
+
+* **finetuned.pt**: [download](https://drive.google.com/uc?export=download&id=10dDiysI4JKo7U47Gvor1m2d1-iRXbUwp)
+
+**Wildfire Segmentation**: Unet++
+
+* **pretrained.pth**: [download](https://drive.google.com/uc?export=download&id=1kiPLkQmu51w2zc_LC3qWigTuONK1SkZf)
+
+
+---
+
 ## Full Source Code
 
 * Github: [https://github.com/YAI-alcheragan/YAI-alcheraGAN]
