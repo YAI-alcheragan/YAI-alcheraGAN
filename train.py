@@ -1,3 +1,5 @@
+
+
 import numpy as np
 import os
 import argparse
@@ -225,6 +227,3 @@ if __name__ == "__main__":
     trainer = Trainer()
     # summary(trainer.discriminator, (3, 224, 224))
     trainer.train()
-
-
-

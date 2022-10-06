@@ -93,4 +93,3 @@ class EncoderDecoder(nn.Module):
         h = self.encode(x)
         h = self.decode(h)
         return h
-    

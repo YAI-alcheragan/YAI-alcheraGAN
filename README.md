@@ -1,6 +1,5 @@
 # YAI-Alchera Project : Wildfire Image Generator
 
-
 > ***Repository*** : https://github.com/YAI-alcheragan/YAI-alcheraGAN
 
 ## Credits
@@ -150,3 +149,7 @@ To inference,
 * Github: [https://github.com/YAI-alcheragan/YAI-alcheraGAN]
 
 All non-necessary codes are modularized as package. Watch all codes in github repository.
+=======
+## GPGAN
+1. python new_run_gpgan.py --color_weight 0.0001 --gp_input_size 200 --root 데이터셋경로 --blended_folder 결과이미지저장경로
+>>>>>>> gpgan-220930
