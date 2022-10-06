@@ -5,12 +5,14 @@ import torchvision.transforms as transforms
 
 import os
 
-import numpy as np
 from PIL import Image
 
     
 
 class MetricDataset(Dataset):
+    """
+    create dataset for evaluation metric
+    """
     def __init__(self, data_root, load_size=256) :
         
         self.data_root = data_root
