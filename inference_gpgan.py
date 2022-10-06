@@ -121,11 +121,6 @@ def load_weights(net, path):
                     params[key].copy_(torch.from_numpy(pretrained_weights[npkey]).type(Tensor))
 
 def main():
-<<<<<<< HEAD:run_gpgan.py
-    '''Command Line Arguments'''
-=======
-
->>>>>>> gpgan-220930:inference_gpgan.py
     parser = argparse.ArgumentParser(description='Gaussian-Poisson GAN for high-resolution image blending')
 
     ############ For training GP GAN ##################
