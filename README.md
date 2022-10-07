@@ -125,7 +125,7 @@ The files within each fold directories except the additional dataset are:
 
 ---
 
-## Pretrained models & Inference
+## Pretrained models
 
 
 **GP-GAN**: Blending GAN G(x)
