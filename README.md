@@ -147,9 +147,27 @@ The files within each fold directories except the additional dataset are:
 
 All non-necessary codes are modularized as package. Watch all codes in github repository.
 =======
-To inference, 
 
-!python inference_gpgan.py --root ./datasets --result_folder ./experiment --g_path ./blending_gan.npz 
+### To train, 
 
-In this case,  the root folder has subfolders (skipped, confirmed) directly. 
+
+**GP-GAN**: 
+
+* 
+
+**Wildfire Segmentation**: 
+
+
+
+### To inference, 
+
+
+**GP-GAN**: 
+
+* !python inference_gpgan.py --root ./datasets --result_folder ./experiment --g_path ./blending_gan.npz 
+
+
+In this case,  the root folder should have the subfolders (skipped, confirmed) directly. 
+e.g.  ./datasets/skipped ,  ./datasets/confirmed
 Detailed data structure descripltion of (skipped, confirmed) folders in inference_blend_dataset.py 
+e.g.  ./datasets/confirmed/*/images/cur/*.jpg ,    ./datasets/confirmed/*/labels/*.json 
