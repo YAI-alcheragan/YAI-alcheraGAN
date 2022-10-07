@@ -127,9 +127,6 @@ The files within each fold directories except the additional dataset are:
 
 ## Pretrained models & Inference
 
-To inference, 
-
-!python inference_gpgan.py --root ./datasets --result_folder ./experiment --g_path ./blending_gan.npz 
 
 **GP-GAN**: Blending GAN G(x)
 
@@ -150,6 +147,9 @@ To inference,
 
 All non-necessary codes are modularized as package. Watch all codes in github repository.
 =======
-## GPGAN
-1. python new_run_gpgan.py --color_weight 0.0001 --gp_input_size 200 --root 데이터셋경로 --blended_folder 결과이미지저장경로
->>>>>>> gpgan-220930
+To inference, 
+
+!python inference_gpgan.py --root ./datasets --result_folder ./experiment --g_path ./blending_gan.npz 
+
+In this case,  the root folder has subfolders (skipped, confirmed) directly. 
+Detailed data structure descripltion of (skipped, confirmed) folders in inference_blend_dataset.py 
