@@ -128,6 +128,7 @@ The files within each fold directories except the additional dataset are:
 ## Pretrained models
 
 
+
 **GP-GAN**: Blending GAN G(x)
 
 * **blending_gan.npz**: [download](https://drive.google.com/uc?export=download&id=11L-n9cERvQJXkOLYGaOS-jyAt6gH6mHq)
@@ -151,11 +152,14 @@ All non-necessary codes are modularized as package. Watch all codes in github re
 ### To train, 
 
 
-**GP-GAN**: 
-
-* 
 
 **Wildfire Segmentation**: 
+
+* !python 
+
+**GP-GAN**: 
+
+* !python train.py
 
 
 
