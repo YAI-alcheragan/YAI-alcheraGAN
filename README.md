@@ -166,6 +166,9 @@ All non-necessary codes are modularized as package. Watch all codes in github re
 
 
 In this case,  the root folder should have the subfolders (skipped, confirmed) directly. 
+
 e.g.  ./datasets/skipped ,  ./datasets/confirmed
+
 Detailed data structure descripltion of (skipped, confirmed) folders in inference_blend_dataset.py 
+
 e.g.  ./datasets/confirmed/*/images/cur/*.jpg ,    ./datasets/confirmed/*/labels/*.json 
