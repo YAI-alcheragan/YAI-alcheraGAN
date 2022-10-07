@@ -29,12 +29,6 @@ class BlendingDataset(Dataset):
         self.mode = mode
         self.load_size = load_size
 
-        # Assuming  bg_folder = [skipped]  obj_folder = [confirmed]
-        # bg_folder로 지정된 경로에서 glob로 모든 jpg 파일들을 읽어옵니다
-        # obj_folder로 지정된 경로에서 glob로 모든 img.jpg, img.json, mask.jpg 들을 가져옵니다
-        # self.bg_imgs = glob.glob(self.bg_folder+"/**/*.jpg", recursive = True)
-        # self.obj_imgs = glob.glob(self.obj_folder+"/**/*.jpg", recursive=True)
-
         self.bg_imgs = sorted(glob.glob(self.bg_folder+"/*/images/cur/*.jpg"))
         self.obj_imgs = sorted(glob.glob(self.obj_folder+"/*/images/cur/*.jpg"))
         self.bg_imgs = self.obj_imgs
@@ -61,14 +55,6 @@ class BlendingDataset(Dataset):
 
         obj_path = self.obj_imgs[random_idx]
         
-        # # # 알체라 데이터셋 기준으로 
-        # # obj_path = confirmed/#/images/cur/abc.jpg
-        # # obj_label_path = confirmed/#/labels/abc.json 
-        # # obj_mask_path = confirmed/#/masks/abc.jpg
-        # parent_dir, img_name = os.path.split(obj_path)
-        # grandparent_dir, _ = os.path.split(parent_dir)  # confirmed/#/images
-        # obj_label_path = os.path.join(grandparent_dir.replace("images","labels"), img_name ).replace("jpg", "json")
-        # obj_mask_path = os.path.join(grandparent_dir.replace("labels", "masks"), img_name )
         obj_label_path= self.label_paths[random_idx]
         obj_mask_path = self.mask_img_paths[random_idx]
 
