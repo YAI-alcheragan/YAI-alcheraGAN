@@ -153,22 +153,16 @@ All non-necessary codes are modularized as package. Watch all codes in github re
 
 
 
-**Wildfire Segmentation**: 
+**Wildfire Segmentation**:  !python 
 
-* !python 
-
-**GP-GAN**: 
-
-* !python train.py
+**GP-GAN**:  !python train.py
 
 
 
 ### To inference, 
 
 
-**GP-GAN**: 
-
-* !python inference_gpgan.py --root ./datasets --result_folder ./experiment --g_path ./blending_gan.npz 
+**GP-GAN**:  !python inference_gpgan.py --root ./datasets --result_folder ./experiment --g_path ./blending_gan.npz 
 
 
 In this case,  the root folder should have the subfolders (skipped, confirmed) directly. 
