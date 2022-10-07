@@ -173,4 +173,4 @@ e.g.  ./datasets/skipped ,  ./datasets/confirmed
 
 Detailed data structure descripltion of (skipped, confirmed) folders in inference_blend_dataset.py 
 
-e.g.  ./datasets/confirmed/*/images/cur/*.jpg ,    ./datasets/confirmed/*/labels/*.json 
+e.g.  ./datasets/confirmed/\*/images/cur/\*.jpg ,    ./datasets/confirmed/\*/labels/\*.json 
