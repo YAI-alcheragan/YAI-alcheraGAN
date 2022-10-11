@@ -153,7 +153,7 @@ All non-necessary codes are modularized as package. Watch all codes in github re
 
 ---
 
-**Wildfire Segmentation**:  !python 
+**Wildfire Segmentation**:  [train_segementation](https://github.com/YAI-alcheragan/YAI-alcheraGAN/tree/main/train_segmentation)
 
 **GP-GAN**:  !python train.py
 
@@ -162,6 +162,7 @@ All non-necessary codes are modularized as package. Watch all codes in github re
 ### To inference, 
 
 ---
+**Wildfire Segmentation**: [inference_segmentation](https://github.com/YAI-alcheragan/YAI-alcheraGAN/tree/main/train_segmentation)
 
 **GP-GAN**:  !python inference_gpgan.py --root ./datasets --result_folder ./experiment --g_path ./blending_gan.npz 
 
