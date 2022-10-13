@@ -207,18 +207,12 @@ All non-necessary codes are modularized as package. Watch all codes in github re
 ### To inference, 
 
 ---
+1. Create Segmentation Mask Images
 **Wildfire Segmentation**: [inference_segmentation](https://github.com/YAI-alcheragan/YAI-alcheraGAN/tree/main/train_segmentation)
 
+2. Run Model
 **GP-GAN**:
 ```
 !python inference_gpgan.py --root ./datasets --result_folder ./experiment --g_path ./blending_gan.npz 
 ```
 
-
-In this case,  the root folder should have the subfolders (skipped, confirmed) directly. 
-
-e.g.  ./datasets/skipped ,  ./datasets/confirmed
-
-Detailed data structure description of (skipped, confirmed) folders in inference_blend_dataset.py 
-
-e.g.  ./datasets/confirmed/\*/images/cur/\*.jpg ,    ./datasets/confirmed/\*/labels/\*.json 
