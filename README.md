@@ -152,19 +152,19 @@ masks folder made by [train_segementation](https://github.com/YAI-alcheragan/YAI
 
 ### Target Example
 
-![Target Example](NEED GITHUB DATA LINK)
+![Target Example](/img/img1.png)
 
 ### Source Example
 
-![Source Example](NEED GITHUB DATA LINK)
+![Source Example](/img/img2.png)
 
 ### Segmentation Example
 
-![Segmentation Example](NEED GITHUB DATA LINK)
+![Segmentation Example](/img/img3.png)
 
 ### Final Output
 
-![Final Output](NEED GITHUB DATA LINK)
+![Final Output](/img/img4.png)
 
 ---
 
