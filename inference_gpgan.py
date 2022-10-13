@@ -11,8 +11,6 @@ from skimage.io import imread, imsave
 from gp_gan import gp_gan
 from model import EncoderDecoder
 from inference_blend_dataset import BlendingDataset4
-# import chainer
-# from chainer import cuda, serializers
 
 
 basename = lambda path: os.path.splitext(os.path.basename(path))[0]
