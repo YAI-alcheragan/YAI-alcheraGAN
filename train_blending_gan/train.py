@@ -1,15 +1,13 @@
-
-
 import numpy as np
 import os
 import argparse
 import random
 from torch.utils.data import DataLoader
 from blend_dataset import BlendingDataset
-from model import *
 from torch.nn import functional as F
 from torchvision.utils import save_image
-# import vessl
+from torch import Tensor
+from model import *
 
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 NGPU = torch.cuda.device_count()
@@ -54,9 +52,9 @@ class Trainer:
 
         parser.add_argument('--manual_seed', type=int, default=5, help='Manul seed')
 
-        parser.add_argument("--size", type=int, default=256, help="image sizes for the model")
+        parser.add_argument("--size", type=int, default=64, help="image sizes for the model")
         parser.add_argument("--channel_multiplier", type=int, default=2, help="channel multiplier factor for the model. config-f = 2, else = 1")
-        parser.add_argument("--pretrained",  default=False, help="use pretrained model")
+        parser.add_argument("--pretrained",  default=None, help="path of pretrained model")
 
         self.args = parser.parse_args()
 
@@ -82,8 +80,8 @@ class Trainer:
                                         image_size=self.args.size, conv_init=init_conv, bn_init=init_bn).to(device)
         #load pretrained model
         if self.args.pretrained:
-            print("use pretrained model")
-            self.load_weights(self.generator, "./blending_gan.npz")
+            print("getting pretrained model...")
+            self.load_weights(self.generator, self.args.pretrained)
         self.discriminator = DCGAN_D(self.args.size, self.args.ndf, conv_init=init_conv, bn_init=init_bn).to(device)
 
         '''optimizer'''
@@ -104,9 +102,12 @@ class Trainer:
         save_image(img, "%s/%d.png"%(dst_path, idx), nrow=4)
 
     def load_weights(self, net, path):
+        """
+        load pretrained/finetuned model weights from 'path' to 'net'
+        """
         params = net.state_dict()
         pretrained_weights = np.load(path, allow_pickle=True)
-        with torch.no_grad(): 
+        with torch.no_grad():
             for key in params:
                 if "weight" == key[-6:]:
                     npkey = key[:-7].split('.')
@@ -119,11 +120,11 @@ class Trainer:
                     npkey2 = npkey + '/gamma'
                     # npkey = bytes(npkey, "utf-8")
                     if npkey1 in pretrained_weights.keys():
-                        print("Weight found for " + npkey1 + " layer")
-                        params[key].copy_(torch.from_numpy(pretrained_weights[npkey1]).type(torch.Tensor))
+                        #print("Weight found for " + npkey1 + " layer")
+                        params[key].copy_(torch.from_numpy(pretrained_weights[npkey1]).type(Tensor))
                     if npkey2 in pretrained_weights.keys():
-                        print("Weight found for " + npkey2 + " layer")
-                        params[key].copy_(torch.from_numpy(pretrained_weights[npkey2]).type(torch.Tensor))
+                        #print("Weight found for " + npkey2 + " layer")
+                        params[key].copy_(torch.from_numpy(pretrained_weights[npkey2]).type(Tensor))
                 if "running_var" == key[-11:]:
                     npkey = key[:-12].split('.')
                     if npkey[0] == 'bn':
@@ -134,8 +135,8 @@ class Trainer:
                     npkey = npkey + '/avg_var'
                     # npkey = bytes(npkey, "utf-8")
                     if npkey in pretrained_weights.keys():
-                        print("Weight found for " + npkey + " layer")
-                        params[key].copy_(torch.from_numpy(pretrained_weights[npkey]).type(torch.Tensor))
+                        #print("Weight found for " + npkey + " layer")
+                        params[key].copy_(torch.from_numpy(pretrained_weights[npkey]).type(Tensor))
                 if "running_mean" == key[-12:]:
                     npkey = key[:-13].split('.')
                     if npkey[0] == 'bn':
@@ -146,8 +147,8 @@ class Trainer:
                     npkey = npkey + '/avg_mean'
                     # npkey = bytes(npkey, "utf-8")
                     if npkey in pretrained_weights.keys():
-                        print("Weight found for " + npkey + " layer")
-                        params[key].copy_(torch.from_numpy(pretrained_weights[npkey]).type(torch.Tensor))
+                        #print("Weight found for " + npkey + " layer")
+                        params[key].copy_(torch.from_numpy(pretrained_weights[npkey]).type(Tensor))
                 if "bias" == key[-4:]:
                     npkey = key[:-5].split('.')
                     if npkey[0] == 'bn':
@@ -158,13 +159,13 @@ class Trainer:
                     npkey = npkey + '/beta'
                     # npkey = bytes(npkey, "utf-8")
                     if npkey in pretrained_weights.keys():
-                        print("Weight found for " + npkey + " layer")
-                        params[key].copy_(torch.from_numpy(pretrained_weights[npkey]).type(torch.Tensor))
+                        #print("Weight found for " + npkey + " layer")
+                        params[key].copy_(torch.from_numpy(pretrained_weights[npkey]).type(Tensor))
 
     '''train'''
     def train(self):
-        total_iter = int(len(self.loader.dataset)/self.args.batch_size)
-        cnt_iter = 1
+        total_iter = int(len(self.loader.dataset)/self.args.batch_size) * self.args.n_epoch
+        cnt_iter = 0
         best_loss  = 10000
         show_imgs = []
         for epoch in range(self.args.n_epoch):

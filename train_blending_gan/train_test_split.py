@@ -34,8 +34,8 @@ smoke_path = "./datasets/confirmed"
 bg_path = "./datasets/skipped"
 mask_path = "./datasets/mask"
 
-train_path = "./datasets/train"
-test_path = "./datasets/test"
+train_path = "../datasets/train"
+test_path = "../datasets/test"
 checkDir(train_path)
 checkDir(test_path)
 split_ratio = 0.9
