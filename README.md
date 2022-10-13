@@ -40,7 +40,7 @@ pip install -r requirements.txt
 ```
 6. git clone
 ```
-git clone 
+git clone https://github.com/YAI-alcheragan/YAI-alcheraGAN.git
 ```
 
 ## Dataset
