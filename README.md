@@ -69,6 +69,7 @@ The files within each fold directories except the additional dataset are:
 
 ### Data Preview
 To inference, make datasets folder consisting of images, labels, masks per each file #
+Make sure to put the files as the following structure 
 ```
 └── YAI-alcheraGAN/
     ├── datasets/
