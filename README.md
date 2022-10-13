@@ -152,19 +152,37 @@ masks folder made by [train_segementation](https://github.com/YAI-alcheragan/YAI
 
 ### Target Example
 
-![Target Example](NEED GITHUB DATA LINK)
+![Target Example](/img/img1.PNG)
 
 ### Source Example
 
-![Source Example](NEED GITHUB DATA LINK)
+![Source Example](/img/img2.PNG)
 
 ### Segmentation Example
 
-![Segmentation Example](NEED GITHUB DATA LINK)
+![Segmentation Example](/img/img3.PNG)
 
 ### Final Output
 
-![Final Output](NEED GITHUB DATA LINK)
+![Final Output](/img/img4.PNG)
+
+## Experiment
+
+### Experiment description
+
+![Target Example](/img/Experiment_Description.PNG)
+
+### Experiment examples
+
+![Source Example](/img/experiment1.PNG)
+
+![Source Example](/img/experiment2.PNG)
+
+![Source Example](/img/experiment3.PNG)
+
+![Source Example](/img/experiment4.PNG)
+
+![Source Example](/img/experiment5.PNG)
 
 ---
 
@@ -218,3 +236,22 @@ All non-necessary codes are modularized as package. Watch all codes in github re
 python inference_gpgan.py --root ./datasets --result_folder ./results --experiment_folder ./experiments --g_path ./blending_gan.npz 
 ```
 
+
+### To Compute Metrics, 
+
+---
+1. Set True images and False(Generated) images Folder
+```
+└── true_data_root/
+    ├── true_image1.jpg
+    ├── true_image2.jpg
+    └── ...
+└── false_data_root/
+    ├── true_image1.jpg
+    ├── true_image2.jpg
+    └── ...
+```
+2. Compute Metrics
+```
+!python metric.py --true_data_root "real image root" --false_data_root "generated image root" --calculate_num "number of images to use to cal metrics" 
+```
