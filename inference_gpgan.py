@@ -143,8 +143,6 @@ def main():
 
     parser.add_argument('--gpu', type=int, default=0, help='GPU ID (negative value indicates CPU)')
     parser.add_argument('--g_path', default='./blending_gan.npz', help='Path for pretrained Blending GAN model')
-    parser.add_argument('--unsupervised_path', default='models/unsupervised_blending_gan.npz',
-                        help='Path for pretrained unsupervised Blending GAN model')
 
     ############ For inference ##################
     parser.add_argument('--root', default='./datasets', help='Path where confirmed and skipped folder are located at : e.g.  ./datasets/confirmed ')
