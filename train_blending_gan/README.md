@@ -12,9 +12,11 @@
 **Split datasets to train and test**:
 ```
 pyrhon train_test_split.py
+```
 
-After run this code your datasets must follow the structure below
+After run this, code your datasets must follow the structure below
 
+```
 └── datasets/
     ├── train/
     │   ├── bg/
