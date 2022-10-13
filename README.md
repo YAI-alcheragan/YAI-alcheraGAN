@@ -45,9 +45,28 @@ The files within each fold directories except the additional dataset are:
 * `skipped/` - directory contains 10k of 640x480 normal wild forest images
 
 ### Data Preview
-
-![Preview](NEED LINK)
-
+To inference, make datasets folder consisting of images, labels, masks per each file #
+```
+└── YAI-alcheraGAN/
+    ├── datasets/
+    │   ├── confirmed/
+    │   │   ├── 1/
+    │   │   │   ├── images/
+    │   │   │   │   └── (labelfilenames)
+    │   │   │   ├── labels/
+    │   │   │   │   └── (labelfilenames)
+    │   │   │   └── masks/
+    │   │   │       └── (labelfilenames)
+    │   │   └── ...
+    │   └── skipped/
+    │       ├── 1/
+    │       │   └── (labelfilenames)
+    │       └── ...
+    ├── train_segmentation
+    ├── gp_gan
+    └── ...
+```
+masks folder made by [train_segementation](https://github.com/YAI-alcheragan/YAI-alcheraGAN/tree/main/train_segmentation)
 ### Origin
 
 * [**Alchera**](https://alchera.ai/)
