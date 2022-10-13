@@ -23,7 +23,7 @@
 
 1. Create an anaconda environment.
 ```sh
-conda create -n=<env_name> python=3.6 anaconda
+conda create -n=<env_name> python=3.10 anaconda
 conda activate <env_name>
 ```
 2. Install PyTorch
