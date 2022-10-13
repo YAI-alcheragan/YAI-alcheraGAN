@@ -1,5 +1,5 @@
 
-### Training Setting
+## Training Setting
 - pytorch 1.9.0
 - numpy 1.20.3
 - torchvision 0.10.0
@@ -7,12 +7,7 @@
 - pillow 8.3.1
 - opencv-python 4.5.3.56
 
-
-### Data Preview
-To inference, make datasets folder consisting of images, labels, masks per each file #
-Make sure to put the files as the following structure 
-
-### To train, 
+## To train, 
 
 **split datasets to train and test**:
 ```
