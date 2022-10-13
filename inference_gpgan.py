@@ -291,7 +291,7 @@ def main():
 
 
             if args.result_folder:
-                save_image(t(original_img),'%s/total_%s.png' % (args.result_folder,idx))
+                save_image(t(original_img),'%s/result_%s.png' % (args.result_folder,idx))
             else:
                 print("\nError : args.result_folder is not valid\n")
                 break
