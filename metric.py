@@ -10,6 +10,8 @@ from prdc import compute_prdc
 import numpy as np
 import random
 
+import argparse
+
 '''random seed'''
 torch.manual_seed(0)
 np.random.seed(0)
@@ -47,3 +49,14 @@ def cal_metric (dataroot_true, dataroot_false, using_img_num):
   
   return fid_score, dc_score['density'], dc_score['coverage']
 
+if __name__=="__main__":
+  parser = argparse.ArgumentParser(description='Process some integers.')
+  parser.add_argument('--true_data_root', 
+                      help='data root for true images')
+  parser.add_argument('--false_data_root',
+                      help='data root for false images')
+  parser.add_argument('--calculate_num', type=int,
+                        help='number of images to use to calculate metric')
+
+
+  args = parser.parse_args()
