@@ -218,3 +218,22 @@ All non-necessary codes are modularized as package. Watch all codes in github re
 python inference_gpgan.py --root ./datasets --result_folder ./results --experiment_folder ./experiments --g_path ./blending_gan.npz 
 ```
 
+
+### To Compute Metrics, 
+
+---
+1. Set True images and False(Generated) images Folder
+```
+└── true_data_root/
+    ├── true_image1.jpg
+    ├── true_image2.jpg
+    └── ...
+└── false_data_root/
+    ├── true_image1.jpg
+    ├── true_image2.jpg
+    └── ...
+```
+2. Compute Metrics
+```
+!python metric.py --true_data_root "real image root" --false_data_root "generated image root" --calculate_num "number of images to use to cal metrics" 
+```
