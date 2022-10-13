@@ -35,7 +35,7 @@ python train.py --data_root "{root path of datasets}" --bg_dir "bg" --obj_dir "s
 ```
 
 ## Problems
-### Using pretrained model
+### Fine-tuning using pretrained model
 We uses pretrained model from https://github.com/wuhuikai/GP-GAN and the source codes are developed using "chainer" framework not pytorch.
 Since we do not know any information of chainer, we ported chainer code to pytorch, and in the progression of loading pretrained model, which is also built on chainer framework, we found some weight information loss. That is why result of pretrained model or fine-tuned model shows poor quality.
 
