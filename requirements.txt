@@ -28,6 +28,7 @@ parso==0.8.3
 pickleshare==0.7.5
 Pillow==9.2.0
 pipreqs==0.4.11
+prdc
 prompt-toolkit==3.0.31
 pure-eval==0.2.2
 pycparser @ file:///tmp/build/80754af9/pycparser_1636541352034/work
@@ -48,6 +49,8 @@ threadpoolctl==3.1.0
 tifffile==2022.10.10
 torch==1.12.1
 torchaudio==0.11.0
+torchmetrics
+torch-fidelity
 torchvision==0.13.1
 traitlets==5.4.0
 typing_extensions==4.4.0
