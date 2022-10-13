@@ -170,7 +170,7 @@ masks folder made by [train_segementation](https://github.com/YAI-alcheragan/YAI
 
 ### Experiment description
 
-![Target Example](/img/Experiment_Description.PNG)
+![Target Example](/img/Experiment_Description.PNG) {: width="708px" height=""}
 
 ### Experiment examples
 
