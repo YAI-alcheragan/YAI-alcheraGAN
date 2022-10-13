@@ -139,7 +139,9 @@ def main():
 
     ############ For inference ##################
     parser.add_argument('--root', default='./datasets', help='Path where confirmed and skipped folder are located at : e.g.  ./datasets/confirmed ')
-    parser.add_argument('--result_folder', default='experiment_blending_result', help='Name for folder storing results')
+#     parser.add_argument('--result_folder', default='experiment_blending_result', help='Name for folder storing results')
+    parser.add_argument('--experiment_folder', default='experiment_blending_result', help='Name for folder storing experiment results')
+    parser.add_argument('--result_folder', default='blending_result', help='Name for folder storing results')
     parser.add_argument('--crop_size', default=200, help='gp_gan function input image size(how much pixels to be cropped around bbox centor coordinate and re-attached to target image)')
     parser.add_argument('--n_output', default=50, help='How many images to be generated')
 
@@ -166,6 +168,11 @@ def main():
     if not os.path.isdir(args.result_folder):
         os.makedirs(args.result_folder)
     print('\nResult will save to {} ...\n'.format(args.result_folder))
+   
+    if not os.path.isdir(args.experiment_folder):
+        os.makedirs(args.experiment_folder)
+    print('\nExperiments will save to {} ...\n'.format(args.experiment_folder))
+    
     import torchvision.transforms as T                                       
     temp_tf = T.Compose([
                 T.ToPILImage(),
@@ -271,12 +278,24 @@ def main():
             result_total = torch.cat([result_before1,result_before2,result_gp1,result_gp2], 1)             
 
 
+            ############ Save the experiment images ##################
+            t = T.Compose([
+                T.ToPILImage(),
+                T.ToTensor(),
+              ])
+
+            if args.experiment_folder:
+               save_image(result_total,'%s/total_%s.png' % (args.experiment_folder,idx))
+
             ############ Save the result images ##################
+
+
             if args.result_folder:
-                save_image(result_total,'%s/total_%s.png' % (args.result_folder,idx))
+                save_image(t(original_img),'%s/total_%s.png' % (args.result_folder,idx))
             else:
                 print("\nError : args.result_folder is not valid\n")
                 break
+                
 
             if idx == 50 :
               print(f"reach MAX_n_ouput {args.n_output}, end GPGAN inference")
