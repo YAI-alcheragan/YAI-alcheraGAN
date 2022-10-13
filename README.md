@@ -19,6 +19,29 @@
 * Team Member : **[Subin Kang](https://github.com/suuuuuuuubin)** - Yonsei Univ. Dept. Computer Science.
 
 ---
+## Installation
+
+1. Create an anaconda environment.
+```sh
+conda create -n=<env_name> python=3.6 anaconda
+conda activate <env_name>
+```
+2. Install PyTorch
+```sh
+conda install pytorch torchvision cudatoolkit=10.1 -c pytorch
+```
+3. Activate anaconda environment.
+```
+conda activate <env_name>
+```
+5. Install pip packages.
+```sh
+pip install -r requirements.txt
+```
+6. git clone
+```
+git clone 
+```
 
 ## Dataset
 
