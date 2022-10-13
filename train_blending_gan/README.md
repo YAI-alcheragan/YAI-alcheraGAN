@@ -41,4 +41,4 @@ Since we do not know any information of chainer, we ported chainer code to pytor
 
 ### Traininig GP-GAN from scratch
 We also tried to train model from scratch, not using pretrained model. But the results are way worse than pretrained and fine-tuned model.
-We suppose not enouch number of datas might be reason of fail.
+We suppose that not enough data might be the reason for failure.
