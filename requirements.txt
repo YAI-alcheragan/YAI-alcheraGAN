@@ -1,0 +1,58 @@
+asttokens==2.0.8
+backcall==0.2.0
+brotlipy==0.7.0
+certifi @ file:///C:/b/abs_ac29jvt43w/croot/certifi_1665076682579/work/certifi
+cffi @ file:///C:/Windows/Temp/abs_6808y9x40v/croots/recipe/cffi_1659598653989/work
+charset-normalizer==2.1.1
+colorama==0.4.5
+contourpy==1.0.5
+cryptography @ file:///C:/ci/cryptography_1652101729823/work
+cycler==0.11.0
+decorator==5.1.1
+docopt==0.6.2
+executing==1.1.1
+fonttools==4.37.4
+idna==3.4
+imageio==2.22.1
+ipython==8.5.0
+jedi==0.18.1
+joblib==1.2.0
+kiwisolver==1.4.4
+matplotlib==3.6.1
+matplotlib-inline==0.1.6
+networkx==2.8.7
+numpy==1.23.4
+opencv-python==4.6.0
+packaging==21.3
+parso==0.8.3
+pickleshare==0.7.5
+Pillow==9.2.0
+pipreqs==0.4.11
+prompt-toolkit==3.0.31
+pure-eval==0.2.2
+pycparser @ file:///tmp/build/80754af9/pycparser_1636541352034/work
+Pygments==2.13.0
+pyOpenSSL @ file:///opt/conda/conda-bld/pyopenssl_1643788558760/work
+pyparsing==3.0.9
+PySocks @ file:///C:/ci_310/pysocks_1642089375450/work
+python-dateutil==2.8.2
+PyWavelets==1.4.1
+requests @ file:///C:/ci/requests_1657735340829/work
+scikit-image==0.19.3
+scikit-learn==1.1.2
+scipy==1.9.2
+six==1.16.0
+sklearn==0.0
+stack-data==0.5.1
+threadpoolctl==3.1.0
+tifffile==2022.10.10
+torch==1.12.1
+torchaudio==0.11.0
+torchvision==0.13.1
+traitlets==5.4.0
+typing_extensions==4.4.0
+urllib3==1.26.12
+wcwidth==0.2.5
+win-inet-pton @ file:///C:/ci_310/win_inet_pton_1642658466512/work
+wincertstore==0.2
+yarg==0.1.9
