@@ -1,5 +1,5 @@
 
-### Training Setting
+## Training Setting
 - pytorch 1.9.0
 - numpy 1.20.3
 - torchvision 0.10.0
@@ -7,12 +7,7 @@
 - pillow 8.3.1
 - opencv-python 4.5.3.56
 
-
-### Data Preview
-To inference, make datasets folder consisting of images, labels, masks per each file #
-Make sure to put the files as the following structure 
-
-### To train, 
+## To train
 
 **Split datasets to train and test**:
 ```
@@ -39,3 +34,11 @@ After run this code your datasets must follow the structure below
 python train.py --data_root "{root path of datasets}" --bg_dir "bg" --obj_dir "smoke" --size 64 --pretrained "{path of pretrained model}" --batch_size 64 
 ```
 
+## Problems
+### Using pretrained model
+We uses pretrained model from https://github.com/wuhuikai/GP-GAN and the source codes are developed using "chainer" framework not pytorch.
+Since we do not know any information of chainer, we ported chainer code to pytorch, and in the progression of loading pretrained model, which is also built on chainer framework, we found some weight information loss. That is why result of pretrained model or fine-tuned model shows poor quality.
+
+### Traininig GP-GAN from scratch
+We also tried to train model from scratch, not using pretrained model. But the results are way worse than pretrained and fine-tuned model.
+We suppose not enouch number of datas might be reason of fail.
