@@ -23,25 +23,22 @@
 
 1. Create an anaconda environment.
 ```sh
-conda create -n=<env_name> python=3.10 anaconda
+conda create -n <env_name> 
 conda activate <env_name>
 ```
 2. Install PyTorch
 ```sh
-conda install pytorch torchvision cudatoolkit=10.1 -c pytorch
+conda install pytorch torchvision cudatoolkit=11.3 -c pytorch
 ```
-3. Activate anaconda environment.
+4. git clone
+```sh
+git clone https://github.com/YAI-alcheragan/YAI-alcheraGAN.git
 ```
-conda activate <env_name>
-```
-5. Install pip packages.
+3. Install pip packages.
 ```sh
 pip install -r requirements.txt
 ```
-6. git clone
-```
-git clone https://github.com/YAI-alcheragan/YAI-alcheraGAN.git
-```
+
 
 ## Dataset
 
