@@ -166,6 +166,24 @@ masks folder made by [train_segementation](https://github.com/YAI-alcheragan/YAI
 
 ![Final Output](/img/img4.PNG)
 
+## Experiment
+
+### Experiment description
+
+![Target Example](/img/Experiment_Description.PNG)
+
+### Experiment examples
+
+![Source Example](/img/experiment1.PNG)
+
+![Source Example](/img/experiment2.PNG)
+
+![Source Example](/img/experiment3.PNG)
+
+![Source Example](/img/experiment4.PNG)
+
+![Source Example](/img/experiment5.PNG)
+
 ---
 
 ## Pretrained models
