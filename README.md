@@ -87,7 +87,7 @@ Make sure to put the files as the following structure
     │       │   └── (labelfilenames)
     │       └── ...
     ├── train_segmentation
-    ├── gp_gan
+    ├── gp_gan.py
     └── ...
 ```
 masks folder made by [train_segementation](https://github.com/YAI-alcheragan/YAI-alcheraGAN/tree/main/train_segmentation)
