@@ -11,25 +11,6 @@
 ### Data Preview
 To inference, make datasets folder consisting of images, labels, masks per each file #
 Make sure to put the files as the following structure 
-```
-└── YAI-alcheraGAN/
-    ├── datasets/
-    │   ├── confirmed/
-    │   │   ├── 1/
-    │   │   │   ├── images/
-    │   │   │   │   └── (labelfilenames)
-    │   │   │   ├── labels/
-    │   │   │   │   └── (labelfilenames)
-    │   │   │   └── masks/
-    │   │   │       └── (labelfilenames)
-    │   │   └── ...
-    │   └── skipped/
-    │       ├── 1/
-    │       │   └── (labelfilenames)
-    │       └── ...
-    ├── train_segmentation
-    ├── gp_gan
-    └── ...
 
 ### To train, 
 
