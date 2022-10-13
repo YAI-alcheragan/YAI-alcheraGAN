@@ -39,8 +39,6 @@ sklearn==0.0
 stack-data==0.5.1
 threadpoolctl==3.1.0
 tifffile==2022.10.10
-torch==1.12.1
-torchvision==0.13.1
 traitlets==5.4.0
 typing_extensions==4.4.0
 urllib3==1.26.12
