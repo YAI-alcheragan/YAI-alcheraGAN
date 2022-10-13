@@ -25,6 +25,7 @@ parso==0.8.3
 pickleshare==0.7.5
 Pillow==9.2.0
 pipreqs==0.4.11
+prdc==0.2
 prompt-toolkit==3.0.31
 pure-eval==0.2.2
 Pygments==2.13.0
@@ -37,6 +38,8 @@ scipy==1.9.2
 six==1.16.0
 sklearn==0.0
 stack-data==0.5.1
+torchmetrics==0.10.0
+torch-fidelity==0.3.0
 threadpoolctl==3.1.0
 tifffile==2022.10.10
 traitlets==5.4.0
