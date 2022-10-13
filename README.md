@@ -213,10 +213,7 @@ All non-necessary codes are modularized as package. Watch all codes in github re
 
 **Wildfire Segmentation**:  [train_segmentation](https://github.com/YAI-alcheragan/YAI-alcheraGAN/tree/main/train_segmentation)
 
-**GP-GAN**:
-```
-!python train.py
-```
+**GP-GAN**: [train_blending_gan](https://github.com/YAI-alcheragan/YAI-alcheraGAN/tree/main/train_blending_gan)
 
 
 
