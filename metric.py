@@ -60,3 +60,10 @@ if __name__=="__main__":
 
 
   args = parser.parse_args()
+  
+  fid_score, density, coverage = cal_metric(args.true_data_root, args.false_data_root, args.calculate_num)
+  fid_score = fid_score.numpy()
+  print("\n#### Result ####")
+  print(f"fid_score : {fid_score}")
+  print(f"density : {density}")
+  print(f"coverage : {coverage}")
