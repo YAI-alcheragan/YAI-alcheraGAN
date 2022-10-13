@@ -215,6 +215,6 @@ All non-necessary codes are modularized as package. Watch all codes in github re
 2. Run Model
 **GP-GAN**:
 ```
-!python inference_gpgan.py --root ./datasets --result_folder ./experiment --g_path ./blending_gan.npz 
+python inference_gpgan.py --root ./datasets --result_folder ./results --experiment_folder ./experiments --g_path ./blending_gan.npz 
 ```
 
