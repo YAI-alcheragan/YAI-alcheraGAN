@@ -87,7 +87,7 @@ Make sure to put the files as the following structure
     │       │   └── (labelfilenames)
     │       └── ...
     ├── train_segmentation
-    ├── gp_gan
+    ├── gp_gan.py
     └── ...
 ```
 masks folder made by [train_segementation](https://github.com/YAI-alcheragan/YAI-alcheraGAN/tree/main/train_segmentation)
@@ -208,13 +208,13 @@ All non-necessary codes are modularized as package. Watch all codes in github re
 ### To inference, 
 
 ---
-1. Create Segmentation Mask Images
+1. Create **Segmentation Mask** Images
 
 **Wildfire Segmentation**: [inference_segmentation](https://github.com/YAI-alcheragan/YAI-alcheraGAN/tree/main/train_segmentation)
 
 2. Run Model
 **GP-GAN**:
 ```
-!python inference_gpgan.py --root ./datasets --result_folder ./experiment --g_path ./blending_gan.npz 
+python inference_gpgan.py --root ./datasets --result_folder ./results --experiment_folder ./experiments --g_path ./blending_gan.npz 
 ```
 
