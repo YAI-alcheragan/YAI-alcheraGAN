@@ -208,7 +208,7 @@ All non-necessary codes are modularized as package. Watch all codes in github re
 ### To inference, 
 
 ---
-1. Create Segmentation Mask Images
+1. Create **Segmentation Mask** Images
 
 **Wildfire Segmentation**: [inference_segmentation](https://github.com/YAI-alcheragan/YAI-alcheraGAN/tree/main/train_segmentation)
 
