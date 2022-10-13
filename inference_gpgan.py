@@ -136,11 +136,6 @@ def main():
     parser.add_argument('--gradient_kernel', type=str, default='normal', help='Kernel type for calc gradient')
     parser.add_argument('--smooth_sigma', type=float, default=1, help='Sigma for gaussian smooth of Laplacian pyramid')
 
-    parser.add_argument('--supervised', type=lambda x: x == 'True', default=True,
-                        help='Use unsupervised Blending GAN if False')
-    parser.add_argument('--nz', type=int, default=100, help='Size of the latent z vector')
-    parser.add_argument('--n_iteration', type=int, default=1000, help='# of iterations for optimizing z')
-
     parser.add_argument('--gpu', type=int, default=0, help='GPU ID (negative value indicates CPU)')
     parser.add_argument('--g_path', default='./blending_gan.npz', help='Path for pretrained Blending GAN model')
 
