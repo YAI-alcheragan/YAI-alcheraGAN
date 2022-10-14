@@ -96,7 +96,7 @@ python val.py --name <dataset name>_NestedUNet_woDS
     │   └── skipped/
     │       ├── 1/
     │       │   └── images/
-    │   │   │       └── (imagefiles)
+    │       │       └── (imagefiles)
     │       └── ...
     ├── models
     ├── archs.py
