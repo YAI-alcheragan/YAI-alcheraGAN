@@ -97,6 +97,7 @@ masks folder made by [train_segementation](https://github.com/YAI-alcheragan/YAI
 ---
 
 ## Model Architecture
+![Pipeline](https://github.com/YAI-alcheragan/YAI-alcheraGAN/blob/main/img/Snipaste_2022-10-14_12-24-52.png)
 
 **GP-GAN**: Backbone
 
