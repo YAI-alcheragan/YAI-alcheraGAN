@@ -83,5 +83,23 @@ python val.py --name <dataset name>_NestedUNet_woDS
 ```
 ## Making masks 
 1. Make dataset folder in the following structure
+```
+└──train_segmentation/
+    ├── datasets/
+    │   ├── confirmed/
+    │   │   ├── 1/
+    │   │   │   ├── images/
+    │   │   │   │   └── (imagefiles)
+    │   │   │   └── labels/
+    │   │   │       └── (labelfils)
+    │   │   └── ...
+    │   └── skipped/
+    │       ├── 1/
+    │       │   └── images/(imagefiles)
+    │       └── ...
+    ├── models
+    ├── archs.py
+    └── ...
+```
 
 3. Use segmentation.ipynb to make masks folder for each number folder in confirmed/images/
