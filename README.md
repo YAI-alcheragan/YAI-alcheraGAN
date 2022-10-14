@@ -56,13 +56,13 @@ Additional dataset called Smoke5K, which used for segmentation model train([UNet
 
 The files within each fold directories except the additional dataset are:
 
-* `confirmed/#/images/` - directory contains 10k of 640x480 jpg images
+* `confirmed/#/images/` - directory contains 10k of 1920x1080 jpg images
 
 * `confirmed/#/labels/` - directory contains 10k of json labels for the directory mentioned above ([left, up, right, bottom]
 
 * `confirmed/#/masks/` - directory contains 10k of segmented masks for the directory mentioned above
 
-* `skipped/` - directory contains 10k of 640x480 normal wild forest images
+* `skipped/` - directory contains 10k of 1920x1080 normal wild forest images
 
 ### Data Preview
 To inference, make datasets folder consisting of images, labels, masks per each file #
@@ -81,7 +81,7 @@ Make sure to put the files as the following structure
     │   │   └── ...
     │   └── skipped/
     │       ├── 1/
-    │       │   └── (labelfilenames)
+    │       │   └── images/(labelfilenames)
     │       └── ...
     ├── train_segmentation
     ├── gp_gan.py
