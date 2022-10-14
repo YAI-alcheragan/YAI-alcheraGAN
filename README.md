@@ -50,7 +50,7 @@ This dataset contains wildfire images that are given as detected sets from Alche
 
 In total the dataset contains 20k wild forest images of size 1920x1080: 10k in confirmed(detected as wildfire situation) and the other 10k in skipped(detected as nothing-happened) as jpg images, each with a bbox position for detective area that is classified as a situation as JSON file
 
-We generated segmentation mask dataset folder for the confirmed dataset mentioned above, each has same label(image name) for a target of segmentation. This particular directory includes segmented binary masks of size 640x480, following original target image's. A actual area of smoke has size of 128x128 which it's center position is derived from a given image's bbox
+We generated segmentation mask dataset folder for the confirmed dataset mentioned above, each has same label(image name) for a target of segmentation. This particular directory includes segmented binary masks of size 1920x1080, following original target image's. A actual area of smoke has size of 128x128 which it's center position is derived from a given image's bbox
 
 Additional dataset called Smoke5K, which used for segmentation model train([UNet++: A Nested U-Net Architecture for Medical Image Segmentation](https://arxiv.org/abs/1807.10165)), has 5,400 images that are mixture of real(1,400) and synthetic(4,000) smoke images. For preventing overfitting of the segmentation and maintaining naturality of the segmented smoke from general images, we tried to train the model with an unaffective smoke set so we chose this dataset.
 
