@@ -80,3 +80,8 @@ python train.py --dataset <dataset name> --arch NestedUNet --img_ext .jpg --mask
 2. Evaluate.
 ```
 python val.py --name <dataset name>_NestedUNet_woDS
+```
+## Making masks 
+1. Make dataset folder in the following structure
+
+3. Use segmentation.ipynb to make masks folder for each number folder in confirmed/images/
